@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Slide Menu Demo</title>
+    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="slide-menu.css" rel="stylesheet">
+    
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/jquery-ui.min.js"></script>
+    <script src="jquery.slidemenu.js"></script>    
+</head>
+<body>
+<div class="slide-menu">
+    <ul class="menu-items">
+        <li class="menu-item" data-target="#Panel1" title="Panel 1">
+	        <div class="menu-icon">
+            	<i class="fa fa-book"></i>
+            </div>
+        	<div class="menu-content">                
+                <span>Panel 1</span>
+            </div>            
+            <div class="menu-close">
+            	<i class="fa fa-times"></i>
+            </div>
+        </li>
+        <li id="CalendarIcon" class="menu-item" data-target="#Panel2" title="Panel 2">
+        	<div class="menu-icon">
+            	<i class="fa fa-calendar"></i>
+            </div>
+        	<div class="menu-content">                
+                <span>Panel 2</span>
+            </div>
+            <div class="menu-close">
+            	<i class="fa fa-times"></i>
+            </div>
+        </li>
+        <li id="ShoppingIcon" class="menu-item" data-target="#Panel3" title="Panel 3">
+        	<div class="menu-icon">
+            	<i class="fa fa-folder-open"></i>
+            </div>
+        	<div class="menu-content">                
+                <span>Panel 3</span>
+            </div>
+            <div class="menu-close">
+            	<i class="fa fa-times"></i>
+            </div>
+        </li>
+        <li id="SearchIcon" class="menu-item" data-target="#Panel4" title="Panel 4">
+        	<div class="menu-icon">
+            	<i class="fa fa-search"></i>
+            </div>
+        	<div class="menu-content">                
+                <span>Panel 4</span>
+            </div>
+            <div class="menu-close">
+            	<i class="fa fa-times"></i>
+            </div>
+        </li>
+        <li id="BugIcon" class="menu-item" data-target="#Panel5" title="Panel 5">
+        	<div class="menu-icon">
+            	<i class="fa fa-bug"></i>
+            </div>
+            <div class="menu-content">                
+                <span>Panel 5</span>
+            </div>
+            <div class="menu-close">
+            	<i class="fa fa-times"></i>
+            </div>
+        </li>
+    </ul>
+    <div class="menu-panels">
+        <div id="Panel1" class="menu-panel">
+            
+        </div>
+        <div id="Panel2" class="menu-panel">
+            
+        </div>
+        <div id="Panel3" class="menu-panel">
+            
+        </div>
+        <div id="Panel4" class="menu-panel">
+           
+        </div>
+        <div id="Panel5" class="menu-panel">
+            
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+	$(function() {
+		$(".slide-menu").slideMenu();
+	});
+</script>
+</body>
+</html>

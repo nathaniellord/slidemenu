@@ -1,0 +1,131 @@
+/* CSS Document */
+
+@grayD1:shade(#F3F4F1,10%);
+@grayD2:shade(#F3F4F1,20%);
+@grayD3:shade(#F3F4F1,30%);
+@grayC:#CCCCCC;
+@lightBlueL2:tint(#327DCE,20%);
+@white:#FFFFF;
+
+/*
+Slide Menu
+ CSS Structure as follows:
+ 	.slide-menu
+		.menu-items
+			.menu-item
+		.menu-panels
+			.menu-panel
+
+*/
+
+/*Slide Menu styles*/
+.slide-menu {
+	position:fixed;
+	width:300px;
+	height:100%;
+	z-index:10;
+	left:100%;
+	&.left-side {
+		left:0%;
+		right:auto;
+		.menu-items {		
+			.menu-item {
+				right:0px;
+				left:auto;
+				.menu-icon {
+					float:right;	
+				}
+				.menu-close {
+					top: 0px;
+					left: 0px;
+					right:auto;
+				}
+				.menu-content {
+					margin-left:55px;	
+				}
+			}			
+		}
+	}
+	&.open {
+		.menu-items {
+			padding-top:45px;
+		}
+	}
+	.menu-items {
+		position: absolute;
+		left: 0px;
+		height: 100%;
+		width: 100%;
+		z-index: 1;
+		background-color:@grayD2;
+		padding:0px;
+		margin:0px;
+		.menu-item {
+			font-size:26px;
+			border-top: 1px solid @grayD3;
+			border-bottom: 1px solid @grayD3;
+			display:block;
+			cursor:pointer;
+			position:absolute;
+			left:0px;
+			width:100%;
+			background-color:@grayD1;
+			.menu-close {
+				display:none;
+				position: absolute;
+				top: 0px;
+				right: 0px;
+				height:100%;
+				text-align:center;
+				background-color: rgba(255,255,255,0.25);	
+				i {
+					padding-top:8px;	
+				}
+			}
+			.menu-content {
+				padding: 7px 0px;
+				display:none;
+			}
+			.menu-icon {
+				padding: 7px 13px;
+				display:inline-block;
+				text-align:center;
+			}
+			&.active {
+				color:@white;
+				background-color:@lightBlueL2;
+				top:0px;
+				position: absolute;				
+				text-decoration: none;
+				.menu-content, .menu-close {
+					display:inline-block;	
+				}
+			}
+		}
+	}
+	.menu-panels {
+		left: 0px;
+		position: absolute;
+		height: 100%;
+		width:250px;
+		padding-top:50px;
+		background-color:@white;
+		border-left:1px solid @grayC;
+		.menu-panel { 
+			display:none;
+			padding:5px;
+			&.active {
+				display:block;
+			}
+			h2 {
+				font-weight:lighter;
+				vertical-align:middle;
+				display:inline-block;
+			}
+			h3 {
+				font-size:14px;
+				font-weight:bold;
+			}
+		}	
+	}
+}
