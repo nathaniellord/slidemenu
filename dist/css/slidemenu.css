@@ -82,7 +82,7 @@ Slide Menu
   text-align: center;
 }
 .slide-menu .menu-items .menu-item.active {
-  color: #ffffff FF;
+  color: #ffffff;
   background-color: #5b97d8;
   top: 0px;
   position: absolute;
@@ -98,7 +98,7 @@ Slide Menu
   height: 100%;
   width: 250px;
   padding-top: 50px;
-  background-color: #ffffff FF;
+  background-color: #ffffff;
   border-left: 1px solid #cccccc;
 }
 .slide-menu .menu-panels .menu-panel {

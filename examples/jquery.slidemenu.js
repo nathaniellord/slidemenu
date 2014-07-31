@@ -14,7 +14,7 @@ Slide Menu
 		side:"right",
 		panelDirection:"vertical",
 		iconWidth:0,
-		panelWidth:0		
+		panelWidth:0
 	};
 	
 	var initialized=false;
@@ -29,6 +29,7 @@ Slide Menu
 				$this.data("initialized",true);	
 			}
 			if($this.hasClass("left-side")) options.side="left";
+			if($this.hasClass("horizontal-open")) options.side="horizontal";
 			if(document.readyState !== 'complete') {
 				$(document).ready(methods.resize($this));	
 			} else {

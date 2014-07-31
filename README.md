@@ -3,6 +3,11 @@
 Slidemenu is a jquery menu plugin for side menus with fun slide interactions. The project was inspired by the UX designs of [Rob Thomas](http://robbiethomas.me/).
 
 
+## Documentation
+
+The documentation can be found at [http://nathaniellord.com/projects/slidemenu/](http://nathaniellord.com/projects/slidemenu/)
+
+
 ## Usage
 
 For an example of how to use slide menu open up the index.html file in the examples directory.
