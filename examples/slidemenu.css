@@ -36,6 +36,11 @@ Slide Menu
 .slide-menu.left-side .menu-items .menu-item .menu-content {
   margin-left: 55px;
 }
+.slide-menu.left-side .menu-panels {
+  border-left: none;
+  border-right: 1px solid #cccccc;
+  left: -100%;
+}
 .slide-menu.open .menu-items {
   padding-top: 45px;
 }
@@ -100,6 +105,7 @@ Slide Menu
   padding-top: 50px;
   background-color: #ffffff;
   border-left: 1px solid #cccccc;
+  border-bottom: 1px solid #cccccc;
 }
 .slide-menu .menu-panels .menu-panel {
   display: none;

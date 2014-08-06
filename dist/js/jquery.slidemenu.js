@@ -1,3 +1,27 @@
+/**
+ * @preserve Copyright 2014 Nathaniel Lord
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Nathaniel Lord http://www.nathaniellord.com
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+*/
 /*
 Slide Menu
  CSS Structure as follows:
@@ -13,9 +37,14 @@ Slide Menu
 	var options={
 		side:"right",
 		panelDirection:"vertical",
-		iconWidth:0,
-		panelWidth:0
+		iconWidth:"",
+		panelWidth:"",
 	};
+	
+	var settings={
+		autoIconWidth:true,
+		autoPanelWidth:true
+	}
 	
 	var initialized=false;
 	
@@ -29,13 +58,28 @@ Slide Menu
 				$this.data("initialized",true);	
 			}
 			if($this.hasClass("left-side")) options.side="left";
-			if($this.hasClass("horizontal-open")) options.side="horizontal";
+			if($this.hasClass("horizontal-open")) options.panelDirection="horizontal";
+			//Set options
+			if(opts !== undefined) {
+				if(opts.iconWidth !== undefined) {
+					options.iconWidth=opts.iconWidth;
+					settings.autoIconWidth=false;	
+				}
+				if(opts.panelWidth !== undefined) {
+					options.panelWidth=opts.panelWidth;
+					settings.autoPanelWidth=false;	
+				}
+			}
 			if(document.readyState !== 'complete') {
-				$(document).ready(methods.resize($this));	
+				$(document).ready(function() {
+					methods.resize($this);	
+				});
 			} else {
 				methods.resize($this);	
 			}
-			$(window).on("resize",methods.resize($this));
+			$(window).on("resize",function(event) {
+				methods.resize($this)	
+			});
 			methods.resetMenus($this);
 			$this.off("click").on("click",".menu-item",methods.menuHeaderClick);			
 		},
@@ -43,20 +87,24 @@ Slide Menu
 			initialized=true;
 			if(parseInt($(".menu-items",$this).css("right")) == 0 || parseInt($(".menu-items",$this).css("left")) == 0) {
 				if(options.side=="right") {
-					$(".menu-items",$this).css("left","0px").animate({left:-options.iconWidth + "px"},500, function() {
+					var itemsLeft = -options.iconWidth - parseInt($(".menu-items",$this).css("border-left-width"));
+					$(".menu-items",$this).css("left","0px").animate({left:itemsLeft + "px"},500, function() {
 						if(options.panelDirection=="vertical") {
 							$(".menu-panels",$this).css("left",-options.width + "px").css("bottom","100%");
 						} else if(options.panelDirection=="horizontal") {
-							$(".menu-panels",$this).css("left",-options.iconWidth + "px").css("top","0px");
-						}						
+							$(".menu-panels",$this).css("left",itemsLeft + "px").css("top","0px");
+						}
+						methods.resize($this);
 					});					
 				} else {
-					$(".menu-items",$this).css("left",-options.iconWidth + "px").animate({left:"0px"},500, function() {
+					var itemsLeft = -options.width+options.iconWidth ;
+					$(".menu-items",$this).css("left",-options.width + "px").animate({left:itemsLeft + "px"},500, function() {
 						if(options.panelDirection=="vertical") {
 							$(".menu-panels",$this).css("left",options.iconWidth + "px").css("bottom","100%");
 						} else if(options.panelDirection=="horizontal") {
-							$(".menu-panels",$this).css("left",options.iconWidth + "px").css("top","0px");
-						}						
+							$(".menu-panels",$this).css("left",itemsLeft + "px").css("top","0px");
+						}
+						methods.resize($this)
 					});					
 				}
 			}			
@@ -68,24 +116,41 @@ Slide Menu
 			if($this.prev().length!=0) {
 				var topOffset=$this.prev().offset().top+$this.prev().height();
 			}
-			var panelHeight=$(window).height()-topOffset;
-
-			if($(".menu-icon",$this).outerWidth(true)>options.iconWidth) {
+			var menuHeight=$(window).height()-topOffset;
+			if(menuHeight != $this.height()) {
+				changed=true;	
+			}
+			if(settings.autoIconWidth && $(".menu-icon",$this).outerWidth(true)>options.iconWidth) {
 				options.iconWidth=$(".menu-icon",$this).outerWidth(true);
-				console.log(options.iconWidth);
 				changed=true;
 			}
-			if($(".menu-panels",$this).width() != options.panelWidth) {
+			if(settings.autoPanelWidth && $(".menu-panels",$this).width() != options.panelWidth) {
 				options.panelWidth=$(".menu-panels",$this).width();
 				changed=true;				
 			}
-			if(changed==false) return;	
 			options.width=options.panelWidth+options.iconWidth;
-			$this.width(options.width);
-			$this.height(panelHeight).css("top",topOffset);
-			$(".menu-close",$this).css("width",options.iconWidth + "px");
-			if(initialized==false)
-				methods.initOnce($this);
+			if(initialized==false) methods.initOnce($this);
+			if(changed) {				
+				$this.width(options.width);
+				$this.height(menuHeight).css("top",topOffset);
+				if(options.side=="right") {
+					var itemsLeft = -options.iconWidth - parseInt($(".menu-items",$this).css("border-left-width"));
+					$(".menu-items",$this).css("left",itemsLeft + "px");
+					if($this.hasClass("active")) {
+						$(".menu-panels",$this).css("left",-options.width + "px");
+					} else {
+						if(options.panelDirection=="vertical") {
+							$(".menu-panels",$this).css("left",-options.width + "px").css("bottom","100%");
+						} else {
+							$(".menu-panels",$this).css("left","0px");
+						}
+					}
+				} else {
+					
+				}
+				$(".menu-close",$this).css("width",options.iconWidth + "px");
+			}
+			
 		},
 		resetMenus:function($this) {
 			var top=0;
@@ -108,6 +173,7 @@ Slide Menu
 		closeMenu:function(e) {
 			var element=$(e.currentTarget);
 			var $this=$(element).parents(".slide-menu");
+			$this.trigger("slidemenu.beforeClose");
 			var movement={};
 			if(options.side == "right") {
 				movement={left:"0px"};
@@ -115,7 +181,7 @@ Slide Menu
 				movement={right:"0px"};
 			}
 			methods.closePanel($this);
-			$(".menu-item.active",$this).animate(movement,250,function() {
+			$(".menu-item.active",$this).stop().animate(movement,250,function() {
 				$this.removeClass("active");
 				$this.trigger("slidemenu.closed");
 				$(".menu-item.active",$this).removeClass("active");
@@ -133,13 +199,14 @@ Slide Menu
 			//Slide new menu out
 			var movement={};
 			if(options.side == "right") {
+				var leftBorder=parseInt($(".menu-items",$this).css("border-left-width"));
 				var left=parseInt($(".menu-items",$this).css("left"));
-				movement={left:parseInt(-options.width-left) + "px"};
+				movement={left:parseInt(-options.width-left-leftBorder) + "px"};
 			} else if(options.side=="left") {
 				var left=parseInt($(".menu-items",$this).css("left"));				
 				movement={right:parseInt(-options.width+options.iconWidth) + "px"};
 			}
-			$(event.currentTarget).animate(movement,250,function() {
+			$(event.currentTarget).stop().animate(movement,250,function() {
 				//Adjust position of menus
 				$(event.currentTarget).animate({top:"0px"},250,function() {
 					//Show Panel
@@ -169,13 +236,15 @@ Slide Menu
 		},
 		showMenu:function(event) {
 			var $this=$(event.currentTarget).parents(".slide-menu");
+			$this.trigger("slidemenu.beforeOpen");
 			$this.addClass("active");
 			$(event.currentTarget).addClass("active");
 			
 			var movement={};
 			if(options.side == "right") {
+				var leftBorder=parseInt($(".menu-items",$this).css("border-left-width"));
 				var left=parseInt($(".menu-items",$this).css("left"));
-				movement={left:parseInt(-options.width-left) + "px"};
+				movement={left:parseInt(-options.width-left-leftBorder) + "px"};
 			} else if(options.side=="left") {
 				var left=parseInt($(".menu-items",$this).css("left"));				
 				movement={right:parseInt(-options.width+options.iconWidth) + "px"};
@@ -212,9 +281,9 @@ Slide Menu
 				if(options.side == "right") {
 					movement={left:parseInt(-options.width) + "px"};
 				} else if(options.side=="left") {			
-					movement={left:parseInt(options.width) + "px"};
+					movement={left:options.iconWidth + "px"};
 				}
-				$(".menu-panels",$this).animate(movement,250,'linear');
+				$(".menu-panels",$this).stop().animate(movement,250,'linear');
 			}
 		},
 		closePanel:function($this) {
@@ -224,7 +293,7 @@ Slide Menu
 			} else if(options.side == "left") {			
 				movement={left:parseInt(-options.panelWidth + options.iconWidth) + "px"};	
 			}
-			$(".menu-panels",$this).animate(movement,250,function() {
+			$(".menu-panels",$this).stop().animate(movement,250,function() {
 				$(".menu-panel.active",$this).removeClass("active");
 				if(options.panelDirection=="vertical") {
 					var left=0;
@@ -233,9 +302,7 @@ Slide Menu
 					} else if(options.side=="left") {			
 						$(this).css("bottom","100%").css("left",options.iconWidth + "px");
 					}					
-				} else if(options.panelDirection=="horizontal") {
-
-				}				
+				}			
 			});
 		},
 		isOpen:function(e) {
