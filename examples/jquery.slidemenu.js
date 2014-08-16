@@ -33,290 +33,353 @@ Slide Menu
 
 */
 (function( $ ) {
+	'use strict';	
+	var SlideMenu = function(element,options) {
+		this.element = null;
+		this.options = null;
+		this.init('slideMenu',element,options);
+	}
 	
-	var options={
+	SlideMenu.VERSION='0.0.1';
+	SlideMenu.SLIDE_SPEED=0.5;
+	SlideMenu.DEFAULTS={
 		side:"right",
 		panelDirection:"vertical",
 		iconWidth:"",
 		panelWidth:"",
-	};
-	
-	var settings={
 		autoIconWidth:true,
-		autoPanelWidth:true
+		autoPanelWidth:true,
+		initialized:false
 	}
 	
-	var initialized=false;
-	
-	var methods={
-		init : function( opts ) { 
-			var $this=$(this.selector,$(this.context));
-			if($this.data("initialized")===true) {
-				console.log("Menu is already initialized. Destroy the menu before trying to initialize again.");
-				return;	
-			} else {
-				$this.data("initialized",true);	
-			}
-			if($this.hasClass("left-side")) options.side="left";
-			if($this.hasClass("horizontal-open")) options.panelDirection="horizontal";
-			//Set options
-			if(opts !== undefined) {
-				if(opts.iconWidth !== undefined) {
-					options.iconWidth=opts.iconWidth;
-					settings.autoIconWidth=false;	
+	SlideMenu.prototype.init=function(type, element, options) {
+		this.$element = $(element);
+		this.options = this.getOptions(options);
+		
+		if(this.options.initialized) {
+			console.log("Menu is already initialized. Destroy the menu before trying to initialize again.");
+			return;	
+		}
+		if(this.$element.hasClass("left-side")) this.options.side="left";
+		if(this.$element.hasClass("horizontal-open")) this.options.panelDirection="horizontal";
+		
+		if(document.readyState !== 'complete') $(document).on("ready",this.resize());
+		else this.resize();
+		$(window).on("resize",this.resize());
+		
+		var top=0;
+		$(".menu-item",this.$element).each(function(index, element) {
+			$(element).css("position","absolute");  
+			$(element).attr("data-index",index);              
+			$(element).css("top",top + "px");
+			top+=$(element).height();
+		});
+		var instance=this;
+		this.$element.off("click").on("click",".menu-item",this,this.menuClick);		
+	}
+	SlideMenu.prototype.menuClick = function(event) {		
+		var instance=event.data;
+		if($(event.currentTarget).hasClass("active")) {//Close this menu item since it's the only one open
+			instance.closeMenu(event,instance);
+		} else if($(event.currentTarget).parents(".slide-menu").hasClass("active")) { //Close open menu and move new menu into place
+			instance.switchMenus(event,instance);
+		} else {//Open the menu that was selected
+			instance.openMenu(event,instance);
+		}		
+	}
+	SlideMenu.prototype.getDefaults = function () {
+		return SlideMenu.DEFAULTS
+	}	
+	SlideMenu.prototype.getOptions = function (options) {
+		options = $.extend({}, this.getDefaults(), this.$element.data(), options);		
+		if(options.iconWidth!=="") {
+			options.autoIconWidth=false;
+		}
+		if(options.panelWidth!=="") {
+			options.autoPanelWidth=false;	
+		}
+		return options;
+	}
+	SlideMenu.prototype.resize = function() {
+		var changed=false;
+		//Perform calculations
+		var topOffset=0;
+		if(this.$element.prev().length!=0) {
+			var topOffset=this.$element.offset().top+this.$element.prev().height();
+		}
+		var menuHeight=$(window).height()-topOffset;
+		if(menuHeight != this.$element.height()) {
+			changed=true;	
+		}
+		if(this.options.autoIconWidth && $(".menu-icon",this.$element).outerWidth(true)>this.options.iconWidth) {
+			this.options.iconWidth=$(".menu-icon",this.$element).outerWidth(true);
+			changed=true;
+		}
+		if(this.options.autoPanelWidth && $(".menu-panels",this.$element).width() != this.options.panelWidth) {
+			this.options.panelWidth=$(".menu-panels",this.$element).width();
+			changed=true;				
+		}
+		this.options.width=this.options.panelWidth+this.options.iconWidth;
+		//Init Once
+		
+		if(this.options.initialized==false) {			
+			var displayRightMenu=function(sm,itemsLeft) {
+				if(sm.options.panelDirection=="vertical") {
+					$(".menu-panels",sm.$element).css("left",-sm.options.width + "px").css("bottom","100%");
+				} else if(this.options.panelDirection=="horizontal") {
+					$(".menu-panels",sm.$element).css("left",itemsLeft + "px").css("top","0px");
 				}
-				if(opts.panelWidth !== undefined) {
-					options.panelWidth=opts.panelWidth;
-					settings.autoPanelWidth=false;	
+				sm.options.initialized=true;
+				sm.resize();
+			}		
+			var displayLeftMenu=function(sm,itemsLeft) {
+				if(sm.options.panelDirection=="vertical") {
+					$(".menu-panels",sm.$element).css("left",sm.options.iconWidth + "px").css("bottom","100%");
+				} else if(options.panelDirection=="horizontal") {
+					$(".menu-panels",sm.$element).css("left",itemsLeft + "px").css("top","0px");
 				}
-			}
-			if(document.readyState !== 'complete') {
-				$(document).ready(function() {
-					methods.resize($this);	
-				});
-			} else {
-				methods.resize($this);	
-			}
-			$(window).on("resize",function(event) {
-				methods.resize($this)	
-			});
-			methods.resetMenus($this);
-			$this.off("click").on("click",".menu-item",methods.menuHeaderClick);			
-		},
-		initOnce : function($this) {
-			initialized=true;
-			if(parseInt($(".menu-items",$this).css("right")) == 0 || parseInt($(".menu-items",$this).css("left")) == 0) {
-				if(options.side=="right") {
-					var itemsLeft = -options.iconWidth - parseInt($(".menu-items",$this).css("border-left-width"));
-					$(".menu-items",$this).css("left","0px").animate({left:itemsLeft + "px"},500, function() {
-						if(options.panelDirection=="vertical") {
-							$(".menu-panels",$this).css("left",-options.width + "px").css("bottom","100%");
-						} else if(options.panelDirection=="horizontal") {
-							$(".menu-panels",$this).css("left",itemsLeft + "px").css("top","0px");
-						}
-						methods.resize($this);
-					});					
+				sm.options.initialized=true;
+				sm.resize();
+			}	
+			if(parseInt($(".menu-items",this.$element).css("right")) == 0 || parseInt($(".menu-items",this.$element).css("left")) == 0) {
+				if(this.options.side=="right") {
+					var itemsLeft = -this.options.iconWidth - parseInt($(".menu-items",this.$element).css("border-left-width"));
+					$(".menu-items",this.$element).css("left","0px").animate({left:itemsLeft + "px"},500,displayRightMenu(this,itemsLeft));					
 				} else {
-					var itemsLeft = -options.width+options.iconWidth ;
-					$(".menu-items",$this).css("left",-options.width + "px").animate({left:itemsLeft + "px"},500, function() {
-						if(options.panelDirection=="vertical") {
-							$(".menu-panels",$this).css("left",options.iconWidth + "px").css("bottom","100%");
-						} else if(options.panelDirection=="horizontal") {
-							$(".menu-panels",$this).css("left",itemsLeft + "px").css("top","0px");
-						}
-						methods.resize($this)
-					});					
+					var itemsLeft = -this.options.width+this.options.iconWidth ;
+					$(".menu-items",this.$element).css("left",-this.options.width + "px").animate({left:itemsLeft + "px"},500, displayLeftMenu(this));					
 				}
-			}			
-		},
-		resize : function($this) {
-			var changed=false;
-			//Perform calculations
-			var topOffset=0;
-			if($this.prev().length!=0) {
-				var topOffset=$this.prev().offset().top+$this.prev().height();
-			}
-			var menuHeight=$(window).height()-topOffset;
-			if(menuHeight != $this.height()) {
-				changed=true;	
-			}
-			if(settings.autoIconWidth && $(".menu-icon",$this).outerWidth(true)>options.iconWidth) {
-				options.iconWidth=$(".menu-icon",$this).outerWidth(true);
-				changed=true;
-			}
-			if(settings.autoPanelWidth && $(".menu-panels",$this).width() != options.panelWidth) {
-				options.panelWidth=$(".menu-panels",$this).width();
-				changed=true;				
-			}
-			options.width=options.panelWidth+options.iconWidth;
-			if(initialized==false) methods.initOnce($this);
-			if(changed) {				
-				$this.width(options.width);
-				$this.height(menuHeight).css("top",topOffset);
-				if(options.side=="right") {
-					var itemsLeft = -options.iconWidth - parseInt($(".menu-items",$this).css("border-left-width"));
-					$(".menu-items",$this).css("left",itemsLeft + "px");
-					if($this.hasClass("active")) {
-						$(".menu-panels",$this).css("left",-options.width + "px");
+			}	
+		}
+		
+		if(changed) {				
+			this.$element.width(this.options.width);
+			this.$element.height(menuHeight).css("top",topOffset);
+			if(this.options.side=="right") {
+				var itemsLeft = -this.options.iconWidth - parseInt($(".menu-items",this.$element).css("border-left-width"));
+				$(".menu-items",this.$element).css("left",itemsLeft + "px");
+				if(this.$element.hasClass("active")) {
+					$(".menu-panels",this.$element).css("left",-this.options.width + "px");
+				} else {
+					if(this.options.panelDirection=="vertical") {
+						$(".menu-panels",this.$element).css("left",-this.options.width + "px").css("bottom","100%");
 					} else {
-						if(options.panelDirection=="vertical") {
-							$(".menu-panels",$this).css("left",-options.width + "px").css("bottom","100%");
-						} else {
-							$(".menu-panels",$this).css("left","0px");
-						}
+						$(".menu-panels",this.$element).css("left","0px");
 					}
-				} else {
-					
 				}
-				$(".menu-close",$this).css("width",options.iconWidth + "px");
+			} else {
+				
 			}
-			
-		},
-		resetMenus:function($this) {
-			var top=0;
-			$this.find(".menu-item").each(function(index, element) {
-				$(element).css("position","absolute");  
-				$(element).attr("data-index",index);              
-				$(element).css("top",top + "px");
-				top+=$(element).height();
-            });
-		},
-		menuHeaderClick:function(e) {			
-			if($(e.currentTarget).hasClass("active")) {//Close this menu item since it's the only one open
-				methods.closeMenu(e);
-			} else if($(e.currentTarget).parents(".slide-menu").hasClass("active")) { //Close open menu and move new menu into place
-				methods.switchMenus(e);
-			} else {//Open the menu that was selected
-				methods.showMenu(e);
-			}
-		},
-		closeMenu:function(e) {
-			var element=$(e.currentTarget);
-			var $this=$(element).parents(".slide-menu");
-			$this.trigger("slidemenu.beforeClose");
-			var movement={};
-			if(options.side == "right") {
-				movement={left:"0px"};
-			} else if(options.side=="left") {
-				movement={right:"0px"};
-			}
-			methods.closePanel($this);
-			$(".menu-item.active",$this).stop().animate(movement,250,function() {
-				$this.removeClass("active");
-				$this.trigger("slidemenu.closed");
-				$(".menu-item.active",$this).removeClass("active");
-				//Move tiles back to their places
-				var top=0;
-				$this.find(".menu-item").each(function(index, element) {
-					$(element).animate({top: top + "px"},250);
-					top+=$(element).height();
-				});
-			});
-		},
-		switchMenus:function(event) {
-			var $this=$(event.currentTarget).parents(".slide-menu");
-			methods.closePanel($this);
-			//Slide new menu out
-			var movement={};
-			if(options.side == "right") {
-				var leftBorder=parseInt($(".menu-items",$this).css("border-left-width"));
-				var left=parseInt($(".menu-items",$this).css("left"));
-				movement={left:parseInt(-options.width-left-leftBorder) + "px"};
-			} else if(options.side=="left") {
-				var left=parseInt($(".menu-items",$this).css("left"));				
-				movement={right:parseInt(-options.width+options.iconWidth) + "px"};
-			}
-			$(event.currentTarget).stop().animate(movement,250,function() {
-				//Adjust position of menus
-				$(event.currentTarget).animate({top:"0px"},250,function() {
-					//Show Panel
-					methods.openPanel($this,$(event.currentTarget).data("target"));
-				});
-				var itemIndex=$(event.currentTarget).data("index");
-				var top=$(event.currentTarget).height();
-				$(".menu-item",$this).each(function(index, element) {
-                    if(parseInt($(element).data("index"))!=itemIndex) {
-						$(element).animate({top: top + "px"},250);
-						top+=$(element).height();
-					}
-                });
-			});
-			//Slide current menu in
-			var movement={};
-			if(options.side == "right") {
-				movement={left:"0px"};
-			} else if(options.side=="left") {
-				movement={right:"0px"};
-			}
-			$(".menu-item.active",$this).animate(movement,250,function(ui) {
-				$(this).removeClass("active");
-			});
-			
-			$(event.currentTarget).addClass("active");	
-		},
-		showMenu:function(event) {
-			var $this=$(event.currentTarget).parents(".slide-menu");
-			$this.trigger("slidemenu.beforeOpen");
-			$this.addClass("active");
-			$(event.currentTarget).addClass("active");
-			
-			var movement={};
-			if(options.side == "right") {
-				var leftBorder=parseInt($(".menu-items",$this).css("border-left-width"));
-				var left=parseInt($(".menu-items",$this).css("left"));
-				movement={left:parseInt(-options.width-left-leftBorder) + "px"};
-			} else if(options.side=="left") {
-				var left=parseInt($(".menu-items",$this).css("left"));				
-				movement={right:parseInt(-options.width+options.iconWidth) + "px"};
-			}
-			
-			$(".menu-item.active",$this).animate(movement,250,function() {
-				//shift other menu items down
-				var itemIndex=parseInt($(".menu-item.active").data("index"));
-				var height=$(".menu-item.active").height();
-				$(".menu-item",$this).each(function(index, element) {
-                    if(parseInt($(element).data("index"))<itemIndex) {
+			$(".menu-close",this.$element).css("width",this.options.iconWidth + "px");
+		}
+	}	
+	SlideMenu.prototype.openMenu=function(event,instance) {
+		instance.$element.trigger("slidemenu.beforeOpen");
+		instance.$element.addClass("active");
+		$(event.currentTarget).addClass("active");
+		
+		var movement={};
+		if(instance.options.side == "right") {
+			var leftBorder=parseInt($(".menu-items",instance.$element).css("border-left-width"));
+			var left=parseInt($(".menu-items",instance.$element).css("left"));
+			movement={left:parseInt(-instance.options.width-left-leftBorder) + "px"};
+		} else if(instance.options.side=="left") {
+			var left=parseInt($(".menu-items",instance.$element).css("left"));				
+			movement={right:parseInt(-instance.options.width+instance.options.iconWidth) + "px"};
+		}
+		var optionObj={
+			duration:250,
+			complete:function() {
+				var itemIndex=parseInt($(".menu-item.active",instance.$element).data("index"));
+				var height=$(".menu-item.active",instance.$element).height();
+				$(".menu-item",instance.$element).each(function(index, element) {
+					if(parseInt($(element).data("index"))<itemIndex) {
 						var currentTop=parseInt($(element).css("top"));
 						$(element).animate({top: currentTop + height},250);
 					}
-                });
-				if($(".menu-item.active",$this).css("top")!="0px") {
-					$(".menu-item.active",$this).animate({top:"0px"},250,function() {
-						$this.trigger("slidemenu.opened");
-						methods.openPanel($this,$(event.currentTarget).data("target"));
-					});
+				});
+				if($(".menu-item.active",instance.$element).css("top")!="0px") {
+					var slideOpts = {
+						duration:250,
+						complete:function() {
+							instance.$element.trigger("slidemenu.opened");
+							instance.openPanel($(event.currentTarget).data("target"));
+						}
+					}
+					$(".menu-item.active",instance.$element).animate({top:"0px"},slideOpts);
 				} else {
-					$this.trigger("slidemenu.opened");
-					methods.openPanel($this,$(event.currentTarget).data("target"));
+					instance.$element.trigger("slidemenu.opened");
+					instance.openPanel($(event.currentTarget).data("target"));
 				}
-			});			
-		},
-		openPanel:function($this,target) {
-			$(".menu-panel.active",$this).removeClass("active");
-			$(target,$this).addClass("active");
-			if(options.panelDirection=="vertical") {
-				$(".menu-panels",$this).animate({bottom:"0%"},250,'linear');
-			} else if(options.panelDirection=="horizontal") {
-				var movement={};
-				if(options.side == "right") {
-					movement={left:parseInt(-options.width) + "px"};
-				} else if(options.side=="left") {			
-					movement={left:options.iconWidth + "px"};
-				}
-				$(".menu-panels",$this).stop().animate(movement,250,'linear');
 			}
-		},
-		closePanel:function($this) {
-			var movement={};
-			if(options.side == "right") {
-				movement={left:parseInt(-options.iconWidth) + "px"};
-			} else if(options.side == "left") {			
-				movement={left:parseInt(-options.panelWidth + options.iconWidth) + "px"};	
-			}
-			$(".menu-panels",$this).stop().animate(movement,250,function() {
-				$(".menu-panel.active",$this).removeClass("active");
-				if(options.panelDirection=="vertical") {
-					var left=0;
-					if(options.side == "right") {
-						$(this).css("bottom","100%").css("left",-options.width + "px");
-					} else if(options.side=="left") {			
-						$(this).css("bottom","100%").css("left",options.iconWidth + "px");
-					}					
-				}			
-			});
-		},
-		isOpen:function(e) {
-			return $(event.currentTarget).parents(".slide-menu").hasClass("active");
+		};
+		$(".menu-item.active",instance.$element).animate(movement,optionObj);	
+	}
+	SlideMenu.prototype.switchMenus = function(event, instance) {
+		instance.closePanel();
+		//Slide new menu out
+		var movement={};
+		if(instance.options.side == "right") {
+			var leftBorder=parseInt($(".menu-items",instance.$element).css("border-left-width"));
+			var left=parseInt($(".menu-items",instance.$element).css("left"));
+			movement={left:parseInt(-instance.options.width-left-leftBorder) + "px"};
+		} else if(instance.options.side=="left") {
+			var left=parseInt($(".menu-items",instance.$element).css("left"));				
+			movement={right:parseInt(-instance.options.width+instance.options.iconWidth) + "px"};
 		}
-	};
+		var switchOpts={
+			duration:250,
+			complete:function() {
+				var showOpts={
+					duration:250,
+					complete:function() {
+						instance.openPanel($(event.currentTarget).data("target"));
+					}
+				}
+				$(event.currentTarget).animate({top:"0px"},showOpts);
+				var itemIndex=$(event.currentTarget).data("index");
+				var top=$(event.currentTarget).height();
+				$(".menu-item",instance.$element).each(function(index, element) {
+					if(parseInt($(element).data("index"))!=itemIndex) {
+						$(element).animate({top: top + "px"},250);
+						top+=$(element).height();
+					}
+				});
+			}
+		}
+		$(event.currentTarget).stop().animate(movement,switchOpts);
+		//Slide current menu in
+		var movement={};
+		if(instance.options.side == "right") {
+			movement={left:"0px"};
+		} else if(instance.options.side=="left") {
+			movement={right:"0px"};
+		}
+		$(".menu-item.active",instance.$element).animate(movement,250,function() {
+			$(this).removeClass("active");
+		});
+		
+		$(event.currentTarget).addClass("active");	
+	}
+	SlideMenu.prototype.closeMenu = function() {
+		this.$element.trigger("slidemenu.beforeClose");
+		var instance=this;
+		var movement={};
+		if(instance.options.side == "right") {
+			movement={left:"0px"};
+		} else if(this.options.side=="left") {
+			movement={right:"0px"};
+		}
+		this.closePanel();
+		var closeOpts={
+			duration:250,
+			complete:function() {
+				instance.$element.removeClass("active");
+				instance.$element.trigger("slidemenu.closed");
+				$(".menu-item.active",instance.$element).removeClass("active");
+				//Move tiles back to their places
+				var top=0;
+				$(".menu-item",instance.$element).each(function(index, element) {
+					$(element).animate({top: top + "px"},250);
+					top+=$(element).height();
+				});
+			}
+		};
+		$(".menu-item.active",instance.$element).stop().animate(movement,closeOpts);
+	}
+	SlideMenu.prototype.openPanel = function(target) {
+		$(".menu-panel.active",this.$element).removeClass("active");
+		$(target,this.$element).addClass("active");
+		$(".menu-panel.active",this.$element).css("padding-top",$(".menu-item.active",this.$element).outerHeight(true) + "px");
+		if(this.options.panelDirection=="vertical") {
+			$(".menu-panels",this.$element).animate({bottom:"0%"},250,'linear');
+		} else if(this.options.panelDirection=="horizontal") {
+			var movement={};
+			if(this.options.side == "right") {
+				movement={left:parseInt(-this.options.width) + "px"};
+			} else if(this.options.side=="left") {			
+				movement={left:this.options.iconWidth + "px"};
+			}
+			$(".menu-panels",this.$element).stop().animate(movement,250,'linear');
+		}
+	}
+	SlideMenu.prototype.closePanel = function() {
+		var movement={};
+		var instance=this;
+		if(this.options.side == "right") {
+			movement={left:parseInt(-this.options.iconWidth) + "px"};
+		} else if(options.side == "left") {			
+			movement={left:parseInt(-this.options.panelWidth + this.options.iconWidth) + "px"};	
+		}
+		var closeOpts={
+			duration:250,
+			complete:function() {
+				$(".menu-panel.active",instance.$element).removeClass("active");
+				if(instance.options.panelDirection=="vertical") {
+					var left=0;
+					if(instance.options.side == "right") {
+						$(this).css("bottom","100%").css("left",-instance.options.width + "px");
+					} else if(instance.options.side=="left") {			
+						$(this).css("bottom","100%").css("left",instance.options.iconWidth + "px");
+					}					
+				}	
+			}
+		};
+		$(".menu-panels",instance.$element).stop().animate(movement,closeOpts);
+	}
+	SlideMenu.prototype.activate = function(element, container, callback) {
+		
+	}
+	SlideMenu.prototype.open = function(target) {
+		
+	}
+	SlideMenu.prototype.hide = function() {
+		
+	}
+	SlideMenu.prototype.addTab = function(tab,content) {
+		
+	}
+	SlideMenu.prototype.removeTab = function(target) {
+		
+	}
+	SlideMenu.prototype.hideTab = function(target) {
+		
+	}
+	SlideMenu.prototype.showTab = function(target) {
+		
+	}
+	SlideMenu.prototype.disable = function(target) {
+		
+	}
+	SlideMenu.prototype.enable = function(target) {
+		
+	}
+	SlideMenu.prototype.isOpen = function() {
+		return this.$element.hasClass("active");
+	}
 
-    $.fn.slideMenu = function(method) { 
-		if ( methods[method] ) {
-			return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
-		} else if ( typeof method === 'object' || ! method ) {
-			return methods.init.apply( this, arguments );
-		} else {
-			$.error( 'Method ' +  method + ' does not exist on jQuery.slideMenu' );
-		} 
-    }; 
+	function Plugin(option) {
+		return this.each(function () {
+			var $this   = $(this);
+			var data    = $this.data('slideMenu');
+			var options = typeof option == 'object' && option;
+			
+			if (!data && option == 'destroy') return;
+			if (!data) $this.data('slideMenu', (data = new SlideMenu(this, options)));
+			if (typeof option == 'string') data[option]();
+		});
+	}
+	
+	var old = $.fn.slideMenu;
+	
+	$.fn.slideMenu = Plugin;
+	$.fn.slideMenu.Constructor = SlideMenu;	
+	
+	// Slidemenu NO CONFLICT
+	// ===================	
+	$.fn.slideMenu.noConflict = function () {
+		$.fn.tooltip = old
+		return this
+	}
+	
 }( jQuery ));
