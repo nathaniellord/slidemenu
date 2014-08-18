@@ -432,24 +432,24 @@ Slide Menu
 	function Plugin(option,args) {
 		return this.each(function () {
 			var $this   = $(this);
-			var data    = $this.data('slideMenu');
+			var data    = $this.data('slidemenu');
 			var options = typeof option == 'object' && option;
 			
 			if (!data && option == 'destroy') return;
-			if (!data) $this.data('slideMenu', (data = new SlideMenu(this, options)));
+			if (!data) $this.data('slidemenu', (data = new SlideMenu(this, options)));
 			if (typeof option == 'string') data[option](args);
 		});
 	}
 	
-	var old = $.fn.slideMenu;
+	var old = $.fn.slidemenu;
 	
-	$.fn.slideMenu = Plugin;
-	$.fn.slideMenu.Constructor = SlideMenu;	
+	$.fn.slidemenu = Plugin;
+	$.fn.slidemenu.Constructor = SlideMenu;	
 	
 	// Slidemenu NO CONFLICT
 	// ===================	
-	$.fn.slideMenu.noConflict = function () {
-		$.fn.tooltip = old
+	$.fn.slidemenu.noConflict = function () {
+		$.fn.slidemenu = old
 		return this
 	}
 	
