@@ -205,7 +205,7 @@ Slide Menu
 		$(".menu-item.active",instance.$element).animate(movement,250,function() {
 			$(this).removeClass("active");
 		});
-		$(".menu-item.active").removeClass("active");
+		$(".menu-item.active",instance.$element).removeClass("active");
 		$(event.currentTarget).addClass("active");
 	}
 	SlideMenu.prototype.close = function(callback) {
