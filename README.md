@@ -31,7 +31,6 @@ div.slide-menu
 Include the following files on your page:
 
  * jQuery
- * jQueryUI (Used for animation)
  * dist/js/jquery.slidemenu.min.js
  * dist/css/slidemenu.min.css
 
