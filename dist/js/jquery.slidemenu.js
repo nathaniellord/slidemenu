@@ -51,7 +51,8 @@ Slide Menu
 		autoPanelWidth:true,
 		initialized:false,
 		enabled:true,
-		show:false
+		show:false,
+		top:""
 	}
 	
 	SlideMenu.prototype.init=function(type, element, options) {
@@ -106,6 +107,10 @@ Slide Menu
 		var changed=false;
 		//Perform calculations
 		var topOffset=0;
+		if(typeof(this.options.top)=="number") {
+			topOffset=this.options.top;
+			this.$element.css("top",this.options.top + "px");
+		}
 		var menuHeight=$(window).height()-topOffset;
 		if(menuHeight != this.$element.height()) {
 			changed=true;	
@@ -126,6 +131,7 @@ Slide Menu
 		if(changed) {				
 			this.$element.width(this.options.width);
 			this.$element.height(menuHeight).css("top",topOffset);
+			$(".menu-panels",this.$element).height(menuHeight);
 			if(this.options.side=="right") {
 				var itemsLeft = -this.options.iconWidth - parseInt($(".menu-items",this.$element).css("border-left-width"));
 				$(".menu-items",this.$element).css("left",itemsLeft + "px");
