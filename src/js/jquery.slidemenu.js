@@ -434,6 +434,16 @@ Slide Menu
 	SlideMenu.prototype.isOpen = function() {
 		return this.$element.hasClass("active");
 	}
+	SlideMenu.prototype.destroy = function() {
+		this.$element.css("width","").css("height","").css("top","");
+		this.$element.find(".menu-items").css("left","");
+		this.$element.find(".menu-panels").css("height","").css("left","").css("bottom","");
+		this.$element.find(".menu-item").css("position","").css("top","").css("left","");
+		this.$element.find(".menu-close").css("width","");
+		this.$element.find(".menu-panel").css("padding-top","");
+		delete this.options;
+		delete this.$element;
+	}
 
 	function Plugin(option,args) {
 		return this.each(function () {
@@ -441,7 +451,6 @@ Slide Menu
 			var data    = $this.data('slidemenu');
 			var options = typeof option == 'object' && option;
 			
-			if (!data && option == 'destroy') return;
 			if (!data) $this.data('slidemenu', (data = new SlideMenu(this, options)));
 			if (typeof option == 'string') data[option](args);
 		});
