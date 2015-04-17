@@ -304,7 +304,7 @@ Slide Menu
 	SlideMenu.prototype.show = function(callback) {
 		if(this.options.show==true) return;
 		var instance=this;
-		//Slide the menu in from the side		
+		//Slide the menu in from the side
 		if(parseInt($(".menu-items",instance.$element).css("right")) == 0 || parseInt($(".menu-items",instance.$element).css("left")) == 0) {
 			if(this.options.side=="right") {
 				var itemsLeft = -instance.options.iconWidth - parseInt($(".menu-items",instance.$element).css("border-left-width"));
@@ -320,10 +320,10 @@ Slide Menu
 						instance.resize();
 						if(typeof(callback)=="function") callback();
 					}
-				}				
-				$(".menu-items",instance.$element).css("left","0px").animate({left:itemsLeft + "px"},animateOptions);					
+				}
+				$(".menu-items",instance.$element).css("left","0px").animate({left:itemsLeft + "px"},animateOptions);
 			} else {
-				var itemsLeft = -instance.options.width+instance.options.iconWidth ;
+				var itemsLeft = -instance.options.width+instance.options.iconWidth;
 				var animateOptions={
 					duration:250,
 					complete:function() {
@@ -418,6 +418,8 @@ Slide Menu
 				top+=$(".menu-item.active",this.$element).height();
 			}
 		}
+		//If there is an open tab then move the first element below it
+		if($(".menu-item.active").length) top = $(".menu-item.active").height();
 		$(".menu-item:visible",this.$element).each(function(index, element) {
 			if($(element).hasClass("active")==false) {
 				$(element).animate({top: top + "px"},250);
