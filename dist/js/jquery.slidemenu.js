@@ -68,7 +68,10 @@ Slide Menu
 		
 		if(document.readyState !== 'complete') $(document).on("ready",this.resize());
 		else this.resize();
-		$(window).on("resize",this.resize());
+		var instance=this;
+		$(window).resize(function(event) {
+			SlideMenu.prototype.resize.apply(instance); 
+		});
 		
 		var top=0;
 		$(".menu-item",this.$element).each(function(index, element) {
@@ -77,7 +80,7 @@ Slide Menu
 			$(element).css("top",top + "px");
 			top+=$(element).height();
 		});
-		var instance=this;
+		
 		this.$element.off("click").on("click",".menu-item",this,this.menuClick);		
 	}
 	SlideMenu.prototype.menuClick = function(event) {		
