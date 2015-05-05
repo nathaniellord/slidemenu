@@ -52,7 +52,8 @@ Slide Menu
 		initialized:false,
 		enabled:true,
 		show:false,
-		top:""
+		top:"",
+		bottom:""
 	}
 	
 	SlideMenu.prototype.init=function(type, element, options) {
@@ -114,7 +115,11 @@ Slide Menu
 			topOffset=this.options.top;
 			this.$element.css("top",this.options.top + "px");
 		}
-		var menuHeight=$(window).height()-topOffset;
+		var bottomOffset=0;
+		if(typeof(this.options.bottom)=="number") {
+			bottomOffset=this.options.bottom;
+		}
+		var menuHeight=$(window).height()-topOffset-bottomOffset;
 		if(menuHeight != this.$element.height()) {
 			changed=true;	
 		}
