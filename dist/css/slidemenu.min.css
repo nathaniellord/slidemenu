@@ -3,69 +3,71 @@
 Slide Menu
  CSS Structure as follows:
  	.slide-menu
-		.menu-items
-			.menu-item
 		.menu-panels
 			.menu-panel
+				.menu-panel-header
+				.menu-panel-body
 
 */
 /*Slide Menu styles*/
 .slide-menu {
   position: fixed;
-  width: 300px;
+  width: 50px;
   height: 100%;
   z-index: 10;
-  left: 100%;
+  left: 50%;
+  /*&.left-side {
+		left:0%;
+		right:auto;
+		.menu-items {		
+			.menu-item {
+				right:0px;
+				left:auto;
+				.menu-icon {
+					float:right;	
+				}
+				.menu-close {
+					top: 0px;
+					left: 0px;
+					right:auto;
+				}
+				.menu-content {
+					margin-left:55px;	
+				}
+			}			
+		}
+		.menu-panels {
+			border-left:none;
+			border-right:1px solid @grayC;
+			left:-100%;
+		}
+	}*/
 }
-.slide-menu.left-side {
-  left: 0%;
-  right: auto;
-}
-.slide-menu.left-side .menu-items .menu-item {
-  right: 0px;
-  left: auto;
-}
-.slide-menu.left-side .menu-items .menu-item .menu-icon {
-  float: right;
-}
-.slide-menu.left-side .menu-items .menu-item .menu-close {
-  top: 0px;
-  left: 0px;
-  right: auto;
-}
-.slide-menu.left-side .menu-items .menu-item .menu-content {
-  margin-left: 55px;
-}
-.slide-menu.left-side .menu-panels {
-  border-left: none;
-  border-right: 1px solid #cccccc;
-  left: -100%;
-}
-.slide-menu.open .menu-items {
-  padding-top: 45px;
-}
-.slide-menu .menu-items {
-  position: absolute;
-  left: 0px;
-  height: 100%;
-  width: 100%;
-  z-index: 1;
+.slide-menu .menu-panels {
   background-color: #c2c3c1;
-  padding: 0px;
-  margin: 0px;
+  width: 50px;
+  right: 0px;
+  position: absolute;
+  top: 0px;
+  height: 100%;
 }
-.slide-menu .menu-items .menu-item {
+.slide-menu .menu-panel {
+  overflow: hidden;
+  width: 50px;
+  position: absolute;
+}
+.slide-menu .menu-panel .menu-panel-header {
   font-size: 26px;
   border-top: 1px solid #aaaba9;
   border-bottom: 1px solid #aaaba9;
   display: block;
   cursor: pointer;
-  position: absolute;
   left: 0px;
   width: 100%;
+  transition: left 250ms;
   background-color: #dbdcd9;
 }
-.slide-menu .menu-items .menu-item .menu-close {
+.slide-menu .menu-panel .menu-panel-header .menu-close {
   display: none;
   position: absolute;
   top: 0px;
@@ -74,51 +76,38 @@ Slide Menu
   text-align: center;
   background-color: rgba(255, 255, 255, 0.25);
 }
-.slide-menu .menu-items .menu-item .menu-close i {
+.slide-menu .menu-panel .menu-panel-header .menu-close i {
   padding-top: 8px;
 }
-.slide-menu .menu-items .menu-item .menu-content {
+.slide-menu .menu-panel .menu-panel-header .menu-content {
   padding: 7px 0px;
   display: none;
 }
-.slide-menu .menu-items .menu-item .menu-icon {
+.slide-menu .menu-panel .menu-panel-header .menu-icon {
   padding: 7px 13px;
   display: inline-block;
   text-align: center;
 }
-.slide-menu .menu-items .menu-item.active {
-  color: #ffffff;
+.slide-menu .menu-panel .menu-panel-body {
+  position: relative;
+  top: 47px;
+  width: 250px;
+  background-color: white;
+  margin-right: 50px;
+  left: 0px;
+}
+.slide-menu .menu-panel.active {
+  width: 300px;
+  height: 100%;
+}
+.slide-menu .menu-panel.active .menu-panel-header {
+  color: #FFFFFF;
   background-color: #5b97d8;
   top: 0px;
   position: absolute;
   text-decoration: none;
 }
-.slide-menu .menu-items .menu-item.active .menu-content,
-.slide-menu .menu-items .menu-item.active .menu-close {
+.slide-menu .menu-panel.active .menu-panel-header .menu-content,
+.slide-menu .menu-panel.active .menu-panel-header .menu-close {
   display: inline-block;
-}
-.slide-menu .menu-panels {
-  left: 0px;
-  position: absolute;
-  height: 100%;
-  width: 250px;
-  background-color: #ffffff;
-  border-left: 1px solid #cccccc;
-  border-bottom: 1px solid #cccccc;
-}
-.slide-menu .menu-panels .menu-panel {
-  display: none;
-  padding: 5px;
-}
-.slide-menu .menu-panels .menu-panel.active {
-  display: block;
-}
-.slide-menu .menu-panels .menu-panel h2 {
-  font-weight: lighter;
-  vertical-align: middle;
-  display: inline-block;
-}
-.slide-menu .menu-panels .menu-panel h3 {
-  font-size: 14px;
-  font-weight: bold;
 }

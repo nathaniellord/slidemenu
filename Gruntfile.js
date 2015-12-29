@@ -54,11 +54,28 @@ module.exports = function(grunt) {
 					expand: true
 				}]
 			}
+		},
+		'jsbeautifier': {
+			files : ["src/js/*.js","sec/less/*.less","examples/*.html","examples/*.css","examples/*.js"],
+			options: {
+				js: {
+					indentWithTabs:true	
+				},
+				css: {
+					fileTypes: [".less"],
+					indentWithTabs:true	
+				}
+			}
+		},
+		'jshint': {
+			all: ['src/js/*.js']	
 		}
 	});
 	
 	grunt.loadNpmTasks('grunt-contrib-less');
 	grunt.loadNpmTasks('grunt-closure-compiler');
 	grunt.loadNpmTasks('grunt-contrib-copy');
-	grunt.registerTask('compile',['closure-compiler','less','copy']);
+	grunt.loadNpmTasks('grunt-jsbeautifier');
+	grunt.loadNpmTasks('grunt-contrib-jshint');
+	grunt.registerTask('compile',['jshint','jsbeautifier','closure-compiler','less','copy']);
 };
