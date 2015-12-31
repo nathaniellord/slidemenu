@@ -129,12 +129,12 @@ Slide Menu
 		if (menuHeight !== this.$element.height()) {
 			changed = true;
 		}
-		if (this.options.autoIconWidth && $(".menu-icon", this.$element).outerWidth(true) > this.options.iconWidth) {
-			this.options.iconWidth = $(".menu-icon", this.$element).outerWidth(true);
+		if (this.options.autoIconWidth && $(".menu-panels", this.$element).outerWidth(true) > this.options.iconWidth) {
+			this.options.iconWidth = $(".menu-panels", this.$element).outerWidth(true);
 			changed = true;
 		}
-		if (this.options.autoPanelWidth && $(".menu-panels", this.$element).width() !== this.options.panelWidth) {
-			this.options.panelWidth = $(".menu-panels", this.$element).width();
+		if (this.options.autoPanelWidth && $(".menu-panel-body", this.$element).width() !== this.options.panelWidth) {
+			this.options.panelWidth = $(".menu-panel-body", this.$element).width();
 			changed = true;
 		}
 		this.options.width = this.options.panelWidth + this.options.iconWidth;
@@ -144,13 +144,21 @@ Slide Menu
 			this.show();
 		}
 
+
+		$(".menu-panel", this.$element).each(function(index, element) {
+			var newHeight = $(".menu-panel-header", $(element)).height();
+			$(element).css("height", newHeight + "px");
+			$(".menu-panel-body", $(element)).css("height", menuHeight - newHeight + "px");
+		});
+
 		if (changed) {
-			this.$element.width(this.options.width);
+			//this.$element.width(this.options.width);
 			this.$element.height(menuHeight).css("top", topOffset);
+			this.$element.find(".menu-close").css("width", this.options.iconWidth);
 			//$(".menu-panels", this.$element).height(menuHeight);
 			if (this.options.side === "right") {
 				var itemsLeft = -this.options.iconWidth - parseInt($(".menu-items", this.$element).css("border-left-width"));
-				$(".menu-items", this.$element).css("left", itemsLeft + "px");
+				//$(".menu-panels", this.$element).css("left", itemsLeft + "px");
 				if (this.$element.hasClass("active")) {
 					//$(".menu-panels", this.$element).css("left", -this.options.width + "px");
 				} else {
@@ -169,26 +177,24 @@ Slide Menu
 
 	SlideMenu.prototype.openMenu = function(menu) {
 		var context = this;
-		context.$element.trigger("slidemenu.beforeOpen");
-		context.$element.addClass("active");
+		this.state.currentPanel = menu;
+		context.$element.trigger("slidemenu.beforeOpen").addClass("active").css("width", "300px");
 		$(menu).addClass("active");
-		var left, leftBorder;
+		var left;
 
-		var movement = {};
 		if (context.options.side === "right") {
-			leftBorder = parseInt($(".menu-items", context.$element).css("border-left-width"));
-			left = parseInt($(".menu-items", context.$element).css("left"));
-			$(".menu-item.active", context.$element).css({
-				left: parseInt(-context.options.width - left - leftBorder) + "px"
+			left = -context.options.panelWidth;
+			$(".menu-panel.active", context.$element).css({
+				width: context.options.width + "px"
 			});
 		} else if (context.options.side === "left") {
 			left = parseInt($(".menu-items", context.$element).css("left"));
-			$(".menu-item.active", context.$element).css({
+			$(".menu-panel.active", context.$element).css({
 				right: parseInt(-context.options.width + context.options.iconWidth) + "px"
 			});
 		}
 		this.state.timeout = window.setTimeout(function() {
-			if ($(".menu-item.active", context.$element).css("top") !== "0px") {
+			if ($(".menu-panel.active", context.$element).css("top") !== "0px") {
 				context.reorder(function() {
 					context.$element.trigger("slidemenu.opened");
 					context.openPanel($(menu).data("target"));
@@ -201,84 +207,61 @@ Slide Menu
 
 	};
 
-	SlideMenu.prototype.switchMenus = function(event) {
+	SlideMenu.prototype.switchMenus = function(newMenu) {
 		var context = this;
-		context.closePanel();
+		//Switch Selected Panel
+		var oldPanel = this.state.currentPanel;
+		this.state.currentPanel = $(newMenu);
+
+		//Slide old menu in
+		if (context.options.side === "right") {
+			$(oldPanel).css("width", context.options.iconWidth);
+			context.state.openTimeout = window.setTimeout(function() {
+				context.closePanel.call(context, oldPanel);
+			}, context.options.closeSpeed);
+		} else if (context.options.side === "left") {
+
+		}
+
 		//Slide new menu out
-		var movement = {},
-			left, leftBorder;
-		if (context.options.side === "right") {
-			leftBorder = parseInt($(".menu-items", context.$element).css("border-left-width"));
-			left = parseInt($(".menu-items", context.$element).css("left"));
-			movement = {
-				left: parseInt(-context.options.width - left - leftBorder) + "px"
-			};
-		} else if (context.options.side === "left") {
-			left = parseInt($(".menu-items", context.$element).css("left"));
-			movement = {
-				right: parseInt(-context.options.width + context.options.iconWidth) + "px"
-			};
-		}
-		var switchOpts = {
-			duration: 250,
-			complete: function() {
-				context.reorder(function() {
-					context.openPanel($(event.currentTarget).data("target"));
-				});
-			}
-		};
-		$(event.currentTarget).stop().animate(movement, switchOpts);
-		//Slide current menu in
-		movement = {};
-		if (context.options.side === "right") {
-			movement = {
-				left: "0px"
-			};
-		} else if (context.options.side === "left") {
-			movement = {
-				right: "0px"
-			};
-		}
-		$(".menu-item.active", context.$element).animate(movement, 250, function() {
-			$(this).removeClass("active");
-		});
-		$(".menu-item.active", context.$element).removeClass("active");
-		$(event.currentTarget).addClass("active");
+		this.state.currentPanel.addClass("active").css("width", context.options.width + "px");
+		context.state.openTimeout = window.setTimeout(function() {
+			context.reorder.call(context, function() {
+				context.openPanel.call(context, context.state.currentPanel);
+			});
+		}, context.options.closeSpeed);
 	};
 
 	SlideMenu.prototype.close = function(callback) {
+		var oldPanel = this.state.currentPanel;
+		this.state.currentPanel = undefined;
 		this.$element.trigger("slidemenu.beforeClose");
 		var instance = this;
 		if (instance.options.side === "right") {
-			$(".menu-item.active", instance.$element).css({
-				left: "0px"
+			$(oldPanel).css({
+				width: this.options.iconWidth
 			});
 		} else if (this.options.side === "left") {
-			$(".menu-item.active", instance.$element).css({
+			$(".menu-panel.active", instance.$element).css({
 				right: "0px"
 			});
 		}
-		this.closePanel();
 		this.state.timeout = window.setTimeout(function() {
-			instance.$element.removeClass("active");
+			instance.closePanel(oldPanel);
+			instance.$element.removeClass("active").css("width", "50px");
 			instance.$element.trigger("slidemenu.closed");
 			if (typeof(callback) === "function") {
 				callback();
 			}
-			$(".menu-item.active", instance.$element).removeClass("active");
+			$(".menu-panel.active", instance.$element).removeClass("active");
 			//Move tiles back to their places
 			instance.reorder();
 		}, this.options.openSpeed);
 	};
 
 	SlideMenu.prototype.openPanel = function(target) {
-		$(".menu-panel.active", this.$element).removeClass("active");
-		$(target, this.$element).addClass("active");
-		$(".menu-panel.active", this.$element).css("padding-top", $(".menu-item.active", this.$element).outerHeight(true) + "px");
 		if (this.options.panelDirection === "vertical") {
-			$(".menu-panels", this.$element).animate({
-				bottom: "0%"
-			}, 250, 'linear');
+			$(".menu-panel.active").css("height", "100%");
 		} else if (this.options.panelDirection === "horizontal") {
 			var movement = {};
 			if (this.options.side === "right") {
@@ -294,34 +277,26 @@ Slide Menu
 		}
 	};
 
-	SlideMenu.prototype.closePanel = function() {
-		var movement = {},
-			left;
-		var instance = this;
+	SlideMenu.prototype.closePanel = function(element) {
+		var currentPanel, instance = this;
 		if (this.options.side === "right") {
-			movement = {
-				left: parseInt(-this.options.iconWidth) + "px"
-			};
+			$(".menu-panels", this.$element).css("width", "50px");
 		} else if (this.options.side === "left") {
-			movement = {
-				left: parseInt(-this.options.panelWidth + this.options.iconWidth) + "px"
-			};
+			$(".menu-panels", this.$element).css("width", "50px");
 		}
-		var closeOpts = {
-			duration: 250,
-			complete: function() {
-				$(".menu-panel.active", instance.$element).removeClass("active");
-				if (instance.options.panelDirection === "vertical") {
-					left = 0;
-					if (instance.options.side === "right") {
-						$(this).css("bottom", "100%").css("left", -instance.options.width + "px");
-					} else if (instance.options.side === "left") {
-						$(this).css("bottom", "100%").css("left", instance.options.iconWidth + "px");
-					}
-				}
+
+		this.state.timeout = window.setTimeout(function() {
+			if (element !== undefined) {
+				currentPanel = $(element);
+			} else {
+				currentPanel = $(".menu-panel.active", instance.$element);
 			}
-		};
-		$(".menu-panels", instance.$element).stop().animate(movement, closeOpts);
+			currentPanel.removeClass("active");
+			if (instance.options.panelDirection === "vertical") {
+				var newHeight = $(".menu-panel-header", currentPanel).height();
+				currentPanel.css("height", newHeight + "px");
+			}
+		}, this.options.closeSpeed);
 	};
 
 	SlideMenu.prototype.open = function(target) {
@@ -481,39 +456,49 @@ Slide Menu
 	};
 
 	SlideMenu.prototype.reorder = function(callback) {
-		var top = 0;
-		if ($(".menu-item.active", this.$element).css("top") === "0px") {
+		var top = 0,
+			context = this;
+		if ($(this.state.currentPanel).css("top") === "0px") {
 			if (typeof(callback) === "function") {
 				callback();
 			}
 		} else {
-			if ($(".menu-item.active", this.$element).length > 0) {
-				var animateOptions = {
-					duration: 250,
-					complete: function() {
-						if (typeof(callback) === "function") {
-							callback();
-						}
-					}
-				};
-				$(".menu-item.active", this.$element).animate({
-					top: top + "px"
-				}, animateOptions);
-				top += $(".menu-item.active", this.$element).height();
+			if ($(this.state.currentPanel).length > 0) {
+				if (typeof(callback) === "function") {
+					this.state.timeout = window.setTimeout(function() {
+						callback();
+					}, this.options.openSpeed);
+				}
+				$(this.state.currentPanel).css("top", "0px");
+				top += $(".menu-panel-header", this.state.currentPanel).height();
 			}
 		}
 		//If there is an open tab then move the first element below it
-		if ($(".menu-item.active").length) {
-			top = $(".menu-item.active").height();
+		if (this.state.currentPanel !== undefined) {
+			top = $(".menu-panel-header", $(this.state.currentPanel)).height();
 		}
-		$(".menu-item:visible", this.$element).each(function(index, element) {
-			if ($(element).hasClass("active") === false) {
-				$(element).animate({
-					top: top + "px"
-				}, 250);
-				top += $(element).height();
+		var panels = $(".menu-panel:visible", this.$element);
+		panels.sort(function(a, b) {
+			if ($(b)[0] === $(context.state.currentPanel)[0]) {
+				return 1;
+			} else {
+				return parseInt($(a).attr("data-index")) - parseInt($(b).attr("data-index"));
 			}
 		});
+		console.log(panels);
+		$(panels).each(function(index, element) {
+			if ($(element)[0] !== $(context.state.currentPanel)[0]) {
+				$(element).css({
+					top: top + "px"
+				});
+				top += $(".menu-panel-header", $(element)).height();
+			}
+		});
+		context.state.moveTimeout = window.setTimeout(function() {
+			$(panels).each(function(index, element) {
+				context.$element.find(".menu-panels").append(element);
+			});
+		}, context.options.openSpeed);
 	};
 
 	SlideMenu.prototype.disable = function() {

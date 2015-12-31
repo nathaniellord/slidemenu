@@ -16,15 +16,15 @@
         <section class="menu-panels">
             <section class="menu-panel" title="Panel 1">
                 <header class="menu-panel-header">
-                    <div class="menu-icon">
+                    <button class="menu-icon">
                         <i class="fa fa-book"></i>
-                    </div>
+                    </button>
                     <div class="menu-content">
                         <span>Panel 1</span>
                     </div>
-                    <div class="menu-close">
+                    <button class="menu-close">
                         <i class="fa fa-times"></i>
-                    </div>
+                    </button>
                 </header>
                 <section class="menu-panel-body">
 
@@ -32,15 +32,15 @@
             </section>
             <section class="menu-panel" title="Panel 2">
                 <header class="menu-panel-header">
-                    <div class="menu-icon">
+                    <button class="menu-icon">
                         <i class="fa fa-calendar"></i>
-                    </div>
+                    </button>
                     <div class="menu-content">
                         <span>Panel 2</span>
                     </div>
-                    <div class="menu-close">
+                    <button class="menu-close">
                         <i class="fa fa-times"></i>
-                    </div>
+                    </button>
                 </header>
                 <section class="menu-panel-body">
 
@@ -48,15 +48,15 @@
             </section>
             <section class="menu-panel" title="Panel 3">
                 <header class="menu-panel-header">
-                    <div class="menu-icon">
+                    <button class="menu-icon">
                         <i class="fa fa-folder-open"></i>
-                    </div>
+                    </button>
                     <div class="menu-content">
                         <span>Panel 3</span>
                     </div>
-                    <div class="menu-close">
+                    <button class="menu-close">
                         <i class="fa fa-times"></i>
-                    </div>
+                    </button>
                 </header>
                 <section class="menu-panel-body">
 
@@ -64,15 +64,15 @@
             </section>
             <section class="menu-panel" title="Panel 4">
                 <header class="menu-panel-header">
-                    <div class="menu-icon">
+                    <button class="menu-icon">
                         <i class="fa fa-search"></i>
-                    </div>
+                    </button>
                     <div class="menu-content">
                         <span>Panel 4</span>
                     </div>
-                    <div class="menu-close">
+                    <button class="menu-close">
                         <i class="fa fa-times"></i>
-                    </div>
+                    </button>
                 </header>
                 <section class="menu-panel-body">
 
@@ -80,15 +80,15 @@
             </section>
             <section class="menu-panel" title="Panel 5">
                 <header class="menu-panel-header">
-                    <div class="menu-icon">
+                    <button class="menu-icon">
                         <i class="fa fa-bug"></i>
-                    </div>
+                    </button>
                     <div class="menu-content">
                         <span>Panel 5</span>
                     </div>
-                    <div class="menu-close">
+                    <button class="menu-close">
                         <i class="fa fa-times"></i>
-                    </div>
+                    </button>
                 </header>
                 <section class="menu-panel-body">
 
@@ -98,7 +98,9 @@
     </article>
     <script type="text/javascript">
         $(function() {
-            $(".slide-menu").slidemenu();
+            $(".slide-menu").slidemenu({
+                width: 300
+            });
         });
     </script>
 </body>

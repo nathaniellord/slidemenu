@@ -12,10 +12,12 @@ Slide Menu
 /*Slide Menu styles*/
 .slide-menu {
   position: fixed;
+  overflow: hidden;
   width: 50px;
   height: 100%;
   z-index: 10;
-  left: 50%;
+  right: 0px;
+  transition: width 250ms;
   /*&.left-side {
 		left:0%;
 		right:auto;
@@ -55,6 +57,8 @@ Slide Menu
   overflow: hidden;
   width: 50px;
   position: absolute;
+  right: 0px;
+  transition: left 250ms, top 250ms, height 250ms, width 250ms;
 }
 .slide-menu .menu-panel .menu-panel-header {
   font-size: 26px;
@@ -62,10 +66,9 @@ Slide Menu
   border-bottom: 1px solid #aaaba9;
   display: block;
   cursor: pointer;
-  left: 0px;
   width: 100%;
-  transition: left 250ms;
   background-color: #dbdcd9;
+  white-space: nowrap;
 }
 .slide-menu .menu-panel .menu-panel-header .menu-close {
   display: none;
@@ -75,18 +78,22 @@ Slide Menu
   height: 100%;
   text-align: center;
   background-color: rgba(255, 255, 255, 0.25);
-}
-.slide-menu .menu-panel .menu-panel-header .menu-close i {
-  padding-top: 8px;
+  font-size: 26px;
+  color: white;
+  border: none;
 }
 .slide-menu .menu-panel .menu-panel-header .menu-content {
   padding: 7px 0px;
   display: none;
 }
 .slide-menu .menu-panel .menu-panel-header .menu-icon {
+  font-size: 26px;
   padding: 7px 13px;
   display: inline-block;
   text-align: center;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
 }
 .slide-menu .menu-panel .menu-panel-body {
   position: relative;
@@ -110,4 +117,11 @@ Slide Menu
 .slide-menu .menu-panel.active .menu-panel-header .menu-content,
 .slide-menu .menu-panel.active .menu-panel-header .menu-close {
   display: inline-block;
+}
+.slide-menu .menu-panel.active .menu-panel-header .menu-icon {
+  color: white;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+.slide-menu .menu-panel.open {
+  overflow: visible;
 }

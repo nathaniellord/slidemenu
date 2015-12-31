@@ -21,10 +21,12 @@ Slide Menu
 /*Slide Menu styles*/
 .slide-menu {
 	position:fixed;
+	overflow:hidden;
 	width:50px;
 	height:100%;
 	z-index:10;
-	left:50%;
+	right:0px;
+	transition:width 250ms;
 	/*&.left-side {
 		left:0%;
 		right:auto;
@@ -66,16 +68,17 @@ Slide Menu
 		overflow:hidden;
 		width:50px;
 		position:absolute;
+		right:0px;
+		transition:left 250ms, top 250ms, height 250ms, width 250ms;
 		.menu-panel-header {
 			font-size:26px;
 			border-top: 1px solid @grayD3;
 			border-bottom: 1px solid @grayD3;
 			display:block;
 			cursor:pointer;
-			left:0px;
 			width:100%;
-			transition:left 250ms;
 			background-color:@grayD1;
+			white-space:nowrap;
 			.menu-close {
 				display:none;
 				position: absolute;
@@ -83,19 +86,23 @@ Slide Menu
 				right: 0px;
 				height:100%;
 				text-align:center;
-				background-color: rgba(255,255,255,0.25);	
-				i {
-					padding-top:8px;	
-				}
+				background-color: rgba(255,255,255,0.25);
+				font-size:26px;
+				color:white;
+				border:none;
 			}
 			.menu-content {
 				padding: 7px 0px;
 				display:none;
 			}
 			.menu-icon {
+				font-size:26px;
 				padding: 7px 13px;
 				display:inline-block;
 				text-align:center;
+				border:none;
+				background-color:transparent;
+				cursor:pointer;
 			}
 			
 		}
@@ -117,12 +124,19 @@ Slide Menu
 				position: absolute;				
 				text-decoration: none;
 				.menu-content, .menu-close {
-					display:inline-block;	
+					display:inline-block;
+				}
+				.menu-icon {
+					color:white;
+					background-color:rgba(0,0,0,0.1)
 				}
 			}
 			.menu-panel-body {
 				
 			}
+		}
+		&.open {
+			overflow:visible;	
 		}
 	}
 }
