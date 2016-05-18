@@ -1,4 +1,4 @@
-# Slidemenu
+# Slidemenu [![Build Status: Linux](https://travis-ci.org/fissionman924/slidemenu.svg?branch=master)](https://travis-ci.org/fissionman924/slidemenu)
 
 Slidemenu is a jquery menu plugin for side menus with fun slide interactions. The project was inspired by the UX designs of [Rob Thomas](http://robbiethomas.me/).
 
