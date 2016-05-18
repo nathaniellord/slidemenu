@@ -41,7 +41,7 @@ Slide Menu
         this.init('slideMenu', element, options);
     };
 
-    SlideMenu.VERSION = '0.0.1';
+    SlideMenu.VERSION = '0.1.2';
     SlideMenu.SLIDE_SPEED = 0.5;
     SlideMenu.DEFAULTS = {
         side: "right",

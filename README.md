@@ -20,11 +20,11 @@ The html structure consists of:
 div.slide-menu
   ul.menu-items
     li.menu-item
-	  div.menu-icon
-	  div.menu-content
-	  div.menu-close
-  div.menu-panels
-    div.menu-panel
+      div.menu-header
+	    div.menu-icon
+	    div.menu-content
+	    div.menu-close
+      div.menu-body
 ```
 
 
