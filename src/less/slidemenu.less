@@ -46,11 +46,6 @@ Slide Menu
                 }
             }
         }
-        .menu-panels {
-            border-left: none;
-            border-right: 1px solid @grayC;
-            left: -100%;
-        }
     }
     &.open {
         .menu-items {
@@ -108,30 +103,15 @@ Slide Menu
                     display: inline-block;
                 }
             }
-        }
-    }
-    .menu-panels {
-        left: 0px;
-        position: absolute;
-        height: 100%;
-        width: 250px;
-        background-color: @white;
-        border-left: 1px solid @grayC;
-        border-bottom: 1px solid @grayC;
-        .menu-panel {
-            display: none;
-            padding: 5px;
-            &.active {
-                display: block;
-            }
-            h2 {
-                font-weight: lighter;
-                vertical-align: middle;
-                display: inline-block;
-            }
-            h3 {
+            .menu-body {
+                height: 0;
+                background-color: white;
+                position: absolute;
+                width: 250px;
+                top: 100%;
+                overflow: auto;
                 font-size: 14px;
-                font-weight: bold;
+                color: rgba(0, 0, 0, 0.875);
             }
         }
     }

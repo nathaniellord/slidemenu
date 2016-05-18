@@ -29,9 +29,8 @@ Slide Menu
  	.slide-menu
 		.menu-items
 			.menu-item
-		.menu-panels
-			.menu-panel
-
+                .menu-header
+                .menu-body
 */
 
 (function($) {
@@ -57,6 +56,17 @@ Slide Menu
         top: "",
         bottom: ""
     };
+    var CLASSES = {
+        ACTIVE: "active",
+        OPEN: "open",
+        CLOSED: "closed",
+    };
+    var EVENTS = {
+        OPENED: "slidemenu.openend",
+        CLOSED: "slidemenu.closed",
+        BEFORE_OPEN: "slidemenu.beforeOpen",
+        BEFORE_CLOSE: "slidemenu.beforeClose"
+    };
 
     SlideMenu.prototype.init = function(type, element, options) {
         this.$element = $(element);
@@ -67,7 +77,6 @@ Slide Menu
             return;
         }
         if (this.$element.hasClass("left-side")) this.options.side = "left";
-        if (this.$element.hasClass("horizontal-open")) this.options.panelDirection = "horizontal";
 
         if (document.readyState !== 'complete') $(document).on("ready", this.resize());
         else this.resize();
@@ -89,9 +98,9 @@ Slide Menu
 
     SlideMenu.prototype.menuClick = function(event) {
         var instance = event.data;
-        if ($(event.currentTarget).hasClass("active")) { //Close this menu item since it's the only one open
+        if ($(event.currentTarget).hasClass(CLASSES.ACTIVE)) { //Close this menu item since it's the only one open
             instance.close(event, instance);
-        } else if ($(event.currentTarget).parents(".slide-menu").hasClass("active")) { //Close open menu and move new menu into place
+        } else if ($(event.currentTarget).parents(".slide-menu").hasClass(CLASSES.ACTIVE)) { //Close open menu and move new menu into place
             instance.switchMenus(event, instance);
         } else { //Open the menu that was selected
             instance.openMenu(event, instance);
@@ -133,10 +142,7 @@ Slide Menu
             this.options.iconWidth = $(".menu-icon", this.$element).outerWidth(true);
             changed = true;
         }
-        if (this.options.autoPanelWidth && $(".menu-panels", this.$element).width() != this.options.panelWidth) {
-            this.options.panelWidth = $(".menu-panels", this.$element).width();
-            changed = true;
-        }
+        this.options.panelWidth = 250;
         this.options.width = this.options.panelWidth + this.options.iconWidth;
         //Init Once
 
@@ -145,19 +151,9 @@ Slide Menu
         if (changed) {
             this.$element.width(this.options.width);
             this.$element.height(menuHeight).css("top", topOffset);
-            $(".menu-panels", this.$element).height(menuHeight);
             if (this.options.side == "right") {
                 var itemsLeft = -this.options.iconWidth - parseInt($(".menu-items", this.$element).css("border-left-width"));
                 $(".menu-items", this.$element).css("left", itemsLeft + "px");
-                if (this.$element.hasClass("active")) {
-                    $(".menu-panels", this.$element).css("left", -this.options.width + "px");
-                } else {
-                    if (this.options.panelDirection == "vertical") {
-                        $(".menu-panels", this.$element).css("left", -this.options.width + "px").css("bottom", "100%");
-                    } else {
-                        $(".menu-panels", this.$element).css("left", "0px");
-                    }
-                }
             } else {
 
             }
@@ -166,12 +162,13 @@ Slide Menu
     };
 
     SlideMenu.prototype.openMenu = function(event, instance) {
-        instance.$element.trigger("slidemenu.beforeOpen");
-        instance.$element.addClass("active");
-        $(event.currentTarget).addClass("active");
+        instance.$element.trigger(EVENTS.BEFORE_OPEN);
+        instance.$element.addClass(CLASSES.ACTIVE);
+        $(event.currentTarget).addClass(CLASSES.ACTIVE);
         var left, leftBorder;
 
         var movement = {};
+        console.log(instance.options.width);
         if (instance.options.side == "right") {
             leftBorder = parseInt($(".menu-items", instance.$element).css("border-left-width"));
             left = parseInt($(".menu-items", instance.$element).css("left"));
@@ -187,18 +184,18 @@ Slide Menu
         var optionObj = {
             duration: 250,
             complete: function() {
-                if ($(".menu-item.active", instance.$element).css("top") != "0px") {
+                if ($(".menu-item." + CLASSES.ACTIVE, instance.$element).css("top") != "0px") {
                     instance.reorder(function() {
-                        instance.$element.trigger("slidemenu.opened");
-                        instance.openPanel($(event.currentTarget).data("target"));
+                        instance.$element.trigger(EVENTS.OPENED);
+                        instance.openPanel($(event.currentTarget));
                     });
                 } else {
-                    instance.$element.trigger("slidemenu.opened");
-                    instance.openPanel($(event.currentTarget).data("target"));
+                    instance.$element.trigger(EVENTS.OPENED);
+                    instance.openPanel($(event.currentTarget));
                 }
             }
         };
-        $(".menu-item.active", instance.$element).animate(movement, optionObj);
+        $(".menu-item." + CLASSES.ACTIVE, instance.$element).animate(movement, optionObj);
     };
 
     SlideMenu.prototype.switchMenus = function(event, instance) {
@@ -238,15 +235,15 @@ Slide Menu
                 right: "0px"
             };
         }
-        $(".menu-item.active", instance.$element).animate(movement, 250, function() {
-            $(this).removeClass("active");
+        $(".menu-item." + CLASSES.ACTIVE, instance.$element).animate(movement, 250, function() {
+            $(this).removeClass(CLASSES.ACTIVE);
         });
-        $(".menu-item.active", instance.$element).removeClass("active");
-        $(event.currentTarget).addClass("active");
+        $(".menu-item." + CLASSES.ACTIVE, instance.$element).removeClass(CLASSES.ACTIVE);
+        $(event.currentTarget).addClass(CLASSES.ACTIVE);
     };
 
     SlideMenu.prototype.close = function(callback) {
-        this.$element.trigger("slidemenu.beforeClose");
+        this.$element.trigger(EVENTS.BEFORE_CLOSE);
         var instance = this;
         var movement = {};
         if (instance.options.side == "right") {
@@ -262,67 +259,49 @@ Slide Menu
         var closeOpts = {
             duration: 250,
             complete: function() {
-                instance.$element.removeClass("active");
-                instance.$element.trigger("slidemenu.closed");
+                instance.$element.removeClass(CLASSES.ACTIVE);
+                instance.$element.trigger(EVENTS.CLOSED);
                 if (typeof(callback) == "function") callback();
-                $(".menu-item.active", instance.$element).removeClass("active");
+                $(".menu-item." + CLASSES.ACTIVE, instance.$element).removeClass(CLASSES.ACTIVE);
                 //Move tiles back to their places
                 instance.reorder();
             }
         };
-        $(".menu-item.active", instance.$element).stop().animate(movement, closeOpts);
+        $(".menu-item." + CLASSES.ACTIVE, instance.$element).stop().animate(movement, closeOpts);
     };
 
     SlideMenu.prototype.openPanel = function(target) {
-        $(".menu-panel.active", this.$element).removeClass("active");
-        $(target, this.$element).addClass("active");
-        $(".menu-panel.active", this.$element).css("padding-top", $(".menu-item.active", this.$element).outerHeight(true) + "px");
+        $(target, this.$element).addClass(CLASSES.ACTIVE);
         if (this.options.panelDirection == "vertical") {
-            $(".menu-panels", this.$element).animate({
-                bottom: "0%"
+            $(".active .menu-body", this.$element).animate({
+                height: this.$element.height() - $(".active .menu-header").height() + "px"
             }, 250, 'linear');
         } else if (this.options.panelDirection == "horizontal") {
-            var movement = {};
-            if (this.options.side == "right") {
-                movement = {
-                    left: parseInt(-this.options.width) + "px"
-                };
-            } else if (this.options.side == "left") {
-                movement = {
-                    left: this.options.iconWidth + "px"
-                };
-            }
-            $(".menu-panels", this.$element).stop().animate(movement, 250, 'linear');
+
         }
     };
 
     SlideMenu.prototype.closePanel = function(callback) {
-        var movement = {};
         var instance = this;
-        if (this.options.side == "right") {
-            movement = {
-                left: parseInt(-this.options.iconWidth) + "px"
-            };
-        } else if (this.options.side == "left") {
-            movement = {
-                left: parseInt(-this.options.panelWidth + this.options.iconWidth) + "px"
-            };
-        }
-        var closeOpts = {
+        var movement = {};
+        var $panel = $(".active .menu-body", instance.$element);
+        $panel.css("z-index", "-1");
+        /*var closeOpts = {
             duration: 250,
             complete: function() {
-                $(".menu-panel.active", instance.$element).removeClass("active");
-                if (instance.options.panelDirection == "vertical") {
-                    var left = 0;
-                    if (instance.options.side == "right") {
-                        $(this).css("bottom", "100%").css("left", -instance.options.width + "px");
-                    } else if (instance.options.side == "left") {
-                        $(this).css("bottom", "100%").css("left", instance.options.iconWidth + "px");
-                    }
-                }
+                $panel.css({
+                    "height": "0",
+                    "z-index": ""
+                });
             }
         };
-        $(".menu-panels", instance.$element).stop().animate(movement, closeOpts);
+        $panel.stop().animate(movement, closeOpts);*/
+        window.setTimeout(function() {
+            $panel.css({
+                "height": "0",
+                "z-index": ""
+            });
+        }, 250);
     };
 
     SlideMenu.prototype.open = function(target) {
@@ -341,12 +320,10 @@ Slide Menu
 
         function hideSlideMenu() {
             if (instance.options.side == "right") {
-                $(".menu-panels", instance.$element).css("left", "0px");
                 $(".menu-items", instance.$element).animate({
                     left: "0px"
                 }, 250);
             } else {
-                $(".menu-panels", instance.$element).css("left", "0px");
                 $(".menu-items", instance.$element).animate({
                     left: -instance.options.width + "px"
                 }, 250);
@@ -366,11 +343,6 @@ Slide Menu
                 animateOptions = {
                     duration: 250,
                     complete: function() {
-                        if (instance.options.panelDirection == "vertical") {
-                            $(".menu-panels", instance.$element).css("left", -instance.options.width + "px").css("bottom", "100%");
-                        } else if (instance.options.panelDirection == "horizontal") {
-                            $(".menu-panels", instance.$element).css("left", itemsLeft + "px").css("top", "0px");
-                        }
                         instance.options.show = true;
                         instance.resize();
                         if (typeof(callback) == "function") callback();
@@ -384,11 +356,6 @@ Slide Menu
                 animateOptions = {
                     duration: 250,
                     complete: function() {
-                        if (instance.options.panelDirection == "vertical") {
-                            $(".menu-panels", instance.$element).css("left", instance.options.iconWidth + "px").css("bottom", "100%");
-                        } else if (options.panelDirection == "horizontal") {
-                            $(".menu-panels", instance.$element).css("left", itemsLeft + "px").css("top", "0px");
-                        }
                         instance.options.show = true;
                         instance.resize();
                         if (typeof(callback) == "function") callback();
@@ -402,30 +369,11 @@ Slide Menu
         instance.options.initialized = true;
     };
 
-    SlideMenu.prototype.generateID = function() {
-        var prefix = "slidemenu-panel-";
-        var counter = 1;
-        var panelID = prefix + counter;
-        while ($("#" + panelID).length > 0) {
-            counter++;
-            panelID = prefix + counter;
-        }
-        return panelID;
-    };
-
     SlideMenu.prototype.addTab = function(args) {
         //Get ID from content
         var tab = $(args.tab);
-        var content = $(args.content);
-        var id = $(content).attr("id");
-        if (id === undefined) {
-            $(content).attr("id", this.generateID());
-        }
-        $(tab).attr("data-target", $(content).attr("id"));
         if ($(tab).hasClass("menu-item") === false) $(tab).addClass("menu-item");
-        if ($(content).hasClass("menu-panel") === false) $(content).addClass("menu-panel");
         $(".menu-items", this.$element).append(tab);
-        $(".menu-panels", this.$element).append(content);
         this.reorder();
     };
 
@@ -436,7 +384,7 @@ Slide Menu
     };
 
     SlideMenu.prototype.hideTab = function(target) {
-        if ($(".menu-item[data-target='" + target + "']", this.$element).hasClass("active")) {
+        if ($(".menu-item[data-target='" + target + "']", this.$element).hasClass(CLASSES.ACTIVE)) {
             //If panel is open then close the menu
             var instance = this;
             this.close(function() {
@@ -470,26 +418,26 @@ Slide Menu
 
     SlideMenu.prototype.reorder = function(callback) {
         var top = 0;
-        if ($(".menu-item.active", this.$element).css("top") == "0px") {
+        if ($(".menu-item." + CLASSES.ACTIVE, this.$element).css("top") == "0px") {
             if (typeof(callback) === "function") callback();
         } else {
-            if ($(".menu-item.active", this.$element).length > 0) {
+            if ($(".menu-item." + CLASSES.ACTIVE, this.$element).length > 0) {
                 var animateOptions = {
                     duration: 250,
                     complete: function() {
                         if (typeof(callback) === "function") callback();
                     }
                 };
-                $(".menu-item.active", this.$element).animate({
+                $(".menu-item." + CLASSES.ACTIVE, this.$element).animate({
                     top: top + "px"
                 }, animateOptions);
-                top += $(".menu-item.active", this.$element).height();
+                top += $(".menu-item." + CLASSES.ACTIVE, this.$element).height();
             }
         }
         //If there is an open tab then move the first element below it
-        if ($(".menu-item.active").length) top = $(".menu-item.active").height();
+        if ($(".menu-item." + CLASSES.ACTIVE).length) top = $(".menu-item." + CLASSES.ACTIVE).height();
         $(".menu-item:visible", this.$element).each(function(index, element) {
-            if ($(element).hasClass("active") === false) {
+            if ($(element).hasClass(CLASSES.ACTIVE) === false) {
                 $(element).animate({
                     top: top + "px"
                 }, 250);
@@ -507,16 +455,14 @@ Slide Menu
     };
 
     SlideMenu.prototype.isOpen = function() {
-        return this.$element.hasClass("active");
+        return this.$element.hasClass(CLASSES.ACTIVE);
     };
 
     SlideMenu.prototype.destroy = function() {
         this.$element.css("width", "").css("height", "").css("top", "");
         this.$element.find(".menu-items").css("left", "");
-        this.$element.find(".menu-panels").css("height", "").css("left", "").css("bottom", "");
         this.$element.find(".menu-item").css("position", "").css("top", "").css("left", "");
         this.$element.find(".menu-close").css("width", "");
-        this.$element.find(".menu-panel").css("padding-top", "");
         delete this.options;
         delete this.$element;
     };

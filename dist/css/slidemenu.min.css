@@ -96,6 +96,16 @@ Slide Menu
 .slide-menu .menu-items .menu-item.active .menu-close {
   display: inline-block;
 }
+.slide-menu .menu-items .menu-item .menu-body {
+  height: 0;
+  background-color: white;
+  position: absolute;
+  width: 250px;
+  top: 100%;
+  overflow: auto;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.875);
+}
 .slide-menu .menu-panels {
   left: 0px;
   position: absolute;

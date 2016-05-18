@@ -8,139 +8,126 @@ Slide Menu
 			.menu-panel
 
 */
-
-
 /*Slide Menu styles*/
-
 .slide-menu {
-    position: fixed;
-    width: 300px;
-    height: 100%;
-    z-index: 10;
-    left: 100%;
+  position: fixed;
+  width: 300px;
+  height: 100%;
+  z-index: 10;
+  left: 100%;
 }
-
 .slide-menu.left-side {
-    left: 0%;
-    right: auto;
+  left: 0%;
+  right: auto;
 }
-
 .slide-menu.left-side .menu-items .menu-item {
-    right: 0px;
-    left: auto;
+  right: 0px;
+  left: auto;
 }
-
 .slide-menu.left-side .menu-items .menu-item .menu-icon {
-    float: right;
+  float: right;
 }
-
 .slide-menu.left-side .menu-items .menu-item .menu-close {
-    top: 0px;
-    left: 0px;
-    right: auto;
+  top: 0px;
+  left: 0px;
+  right: auto;
 }
-
 .slide-menu.left-side .menu-items .menu-item .menu-content {
-    margin-left: 55px;
+  margin-left: 55px;
 }
-
 .slide-menu.left-side .menu-panels {
-    border-left: none;
-    border-right: 1px solid #CCCCCC;
-    left: -100%;
+  border-left: none;
+  border-right: 1px solid #CCCCCC;
+  left: -100%;
 }
-
 .slide-menu.open .menu-items {
-    padding-top: 45px;
+  padding-top: 45px;
 }
-
 .slide-menu .menu-items {
-    position: absolute;
-    left: 0px;
-    height: 100%;
-    width: 100%;
-    z-index: 1;
-    background-color: #c2c3c1;
-    padding: 0px;
-    margin: 0px;
+  position: absolute;
+  left: 0px;
+  height: 100%;
+  width: 100%;
+  z-index: 1;
+  background-color: #c2c3c1;
+  padding: 0px;
+  margin: 0px;
 }
-
 .slide-menu .menu-items .menu-item {
-    font-size: 26px;
-    border-top: 1px solid #aaaba9;
-    border-bottom: 1px solid #aaaba9;
-    display: block;
-    cursor: pointer;
-    position: absolute;
-    left: 0px;
-    width: 100%;
-    background-color: #dbdcd9;
+  font-size: 26px;
+  border-top: 1px solid #aaaba9;
+  border-bottom: 1px solid #aaaba9;
+  display: block;
+  cursor: pointer;
+  position: absolute;
+  left: 0px;
+  width: 100%;
+  background-color: #dbdcd9;
 }
-
 .slide-menu .menu-items .menu-item .menu-close {
-    display: none;
-    position: absolute;
-    top: 0px;
-    right: 0px;
-    height: 100%;
-    text-align: center;
-    background-color: rgba(255, 255, 255, 0.25);
+  display: none;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  height: 100%;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.25);
 }
-
 .slide-menu .menu-items .menu-item .menu-close i {
-    padding-top: 8px;
+  padding-top: 8px;
 }
-
 .slide-menu .menu-items .menu-item .menu-content {
-    padding: 7px 0px;
-    display: none;
+  padding: 7px 0px;
+  display: none;
 }
-
 .slide-menu .menu-items .menu-item .menu-icon {
-    padding: 7px 13px;
-    display: inline-block;
-    text-align: center;
+  padding: 7px 13px;
+  display: inline-block;
+  text-align: center;
 }
-
 .slide-menu .menu-items .menu-item.active {
-    color: #FFFFFF;
-    background-color: #5b97d8;
-    top: 0px;
-    position: absolute;
-    text-decoration: none;
+  color: #FFFFFF;
+  background-color: #5b97d8;
+  top: 0px;
+  position: absolute;
+  text-decoration: none;
 }
-
 .slide-menu .menu-items .menu-item.active .menu-content,
 .slide-menu .menu-items .menu-item.active .menu-close {
-    display: inline-block;
+  display: inline-block;
 }
-
+.slide-menu .menu-items .menu-item .menu-body {
+  height: 0;
+  background-color: white;
+  position: absolute;
+  width: 250px;
+  top: 100%;
+  overflow: auto;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.875);
+}
 .slide-menu .menu-panels {
-    left: 0px;
-    position: absolute;
-    height: 100%;
-    width: 250px;
-    background-color: #FFFFFF;
-    border-left: 1px solid #CCCCCC;
-    border-bottom: 1px solid #CCCCCC;
+  left: 0px;
+  position: absolute;
+  height: 100%;
+  width: 250px;
+  background-color: #FFFFFF;
+  border-left: 1px solid #CCCCCC;
+  border-bottom: 1px solid #CCCCCC;
 }
-
 .slide-menu .menu-panels .menu-panel {
-    display: none;
-    padding: 5px;
+  display: none;
+  padding: 5px;
 }
-
 .slide-menu .menu-panels .menu-panel.active {
-    display: block;
+  display: block;
 }
-
 .slide-menu .menu-panels .menu-panel h2 {
-    font-weight: lighter;
-    vertical-align: middle;
-    display: inline-block;
+  font-weight: lighter;
+  vertical-align: middle;
+  display: inline-block;
 }
-
 .slide-menu .menu-panels .menu-panel h3 {
-    font-size: 14px;
-    font-weight: bold;
+  font-size: 14px;
+  font-weight: bold;
 }
