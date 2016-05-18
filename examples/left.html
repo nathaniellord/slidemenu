@@ -1,96 +1,99 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-	<title>Slide Menu Demo</title>
+    <title>Slide Menu Demo</title>
     <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
     <link href="demo.css" rel="stylesheet">
     <link href="slidemenu.css" rel="stylesheet">
-    
+
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/jquery-ui.min.js"></script>
     <script src="../src/js/jquery.slidemenu.js"></script>
 </head>
+
 <body>
-<div class="slide-menu left-side">
-    <ul class="menu-items">
-        <li class="menu-item" data-target="#PanelA" title="Panel A">
-	        <div class="menu-icon">
-            	<i class="fa fa-book"></i>
+    <div class="slide-menu left-side">
+        <ul class="menu-items">
+            <li class="menu-item" data-target="#PanelA" title="Panel A">
+                <div class="menu-icon">
+                    <i class="fa fa-book"></i>
+                </div>
+                <div class="menu-content">
+                    <span>Panel A</span>
+                </div>
+                <div class="menu-close">
+                    <i class="fa fa-times"></i>
+                </div>
+            </li>
+            <li id="CalendarIcon" class="menu-item" data-target="#PanelB" title="Panel B">
+                <div class="menu-icon">
+                    <i class="fa fa-calendar"></i>
+                </div>
+                <div class="menu-content">
+                    <span>Panel B</span>
+                </div>
+                <div class="menu-close">
+                    <i class="fa fa-times"></i>
+                </div>
+            </li>
+            <li id="ShoppingIcon" class="menu-item" data-target="#PanelC" title="Panel C">
+                <div class="menu-icon">
+                    <i class="fa fa-folder-open"></i>
+                </div>
+                <div class="menu-content">
+                    <span>Panel C</span>
+                </div>
+                <div class="menu-close">
+                    <i class="fa fa-times"></i>
+                </div>
+            </li>
+            <li id="SearchIcon" class="menu-item" data-target="#PanelD" title="Panel D">
+                <div class="menu-icon">
+                    <i class="fa fa-search"></i>
+                </div>
+                <div class="menu-content">
+                    <span>Panel D</span>
+                </div>
+                <div class="menu-close">
+                    <i class="fa fa-times"></i>
+                </div>
+            </li>
+            <li id="BugIcon" class="menu-item" data-target="#PanelE" title="Panel E">
+                <div class="menu-icon">
+                    <i class="fa fa-bug"></i>
+                </div>
+                <div class="menu-content">
+                    <span>Panel E</span>
+                </div>
+                <div class="menu-close">
+                    <i class="fa fa-times"></i>
+                </div>
+            </li>
+        </ul>
+        <div class="menu-panels">
+            <div id="PanelA" class="menu-panel">
+                <h1>Panel A Contents</h1>
             </div>
-        	<div class="menu-content">
-                <span>Panel A</span>
+            <div id="PanelB" class="menu-panel">
+                <h1>Panel B Contents</h1>
             </div>
-            <div class="menu-close">
-            	<i class="fa fa-times"></i>
+            <div id="PanelC" class="menu-panel">
+                <h1>Panel C Contents</h1>
             </div>
-        </li>
-        <li id="CalendarIcon" class="menu-item" data-target="#PanelB" title="Panel B">
-        	<div class="menu-icon">
-            	<i class="fa fa-calendar"></i>
+            <div id="PanelD" class="menu-panel">
+                <h1>Panel D Contents</h1>
             </div>
-        	<div class="menu-content">                
-                <span>Panel B</span>
+            <div id="PanelE" class="menu-panel">
+                <h1>Panel E Contents</h1>
             </div>
-            <div class="menu-close">
-            	<i class="fa fa-times"></i>
-            </div>
-        </li>
-        <li id="ShoppingIcon" class="menu-item" data-target="#PanelC" title="Panel C">
-        	<div class="menu-icon">
-            	<i class="fa fa-folder-open"></i>
-            </div>
-        	<div class="menu-content">                
-                <span>Panel C</span>
-            </div>
-            <div class="menu-close">
-            	<i class="fa fa-times"></i>
-            </div>
-        </li>
-        <li id="SearchIcon" class="menu-item" data-target="#PanelD" title="Panel D">
-        	<div class="menu-icon">
-            	<i class="fa fa-search"></i>
-            </div>
-        	<div class="menu-content">                
-                <span>Panel D</span>
-            </div>
-            <div class="menu-close">
-            	<i class="fa fa-times"></i>
-            </div>
-        </li>
-        <li id="BugIcon" class="menu-item" data-target="#PanelE" title="Panel E">
-        	<div class="menu-icon">
-            	<i class="fa fa-bug"></i>
-            </div>
-            <div class="menu-content">                
-                <span>Panel E</span>
-            </div>
-            <div class="menu-close">
-            	<i class="fa fa-times"></i>
-            </div>
-        </li>
-    </ul>
-    <div class="menu-panels">
-        <div id="PanelA" class="menu-panel">
-            <h1>Panel A Contents</h1>
-        </div>
-        <div id="PanelB" class="menu-panel">
-            <h1>Panel B Contents</h1>
-        </div>
-        <div id="PanelC" class="menu-panel">
-            <h1>Panel C Contents</h1>
-        </div>
-        <div id="PanelD" class="menu-panel">
-        	<h1>Panel D Contents</h1>
-        </div>
-        <div id="PanelE" class="menu-panel">
-        	<h1>Panel E Contents</h1>
         </div>
     </div>
-</div>
-<script type="text/javascript">
-	$(function() {
-		$(".slide-menu").slidemenu();
-	});
-</script>
+    <script type="text/javascript">
+        $(function() {
+            $(".slide-menu").slidemenu();
+        });
+    </script>
 </body>
+
 </html>

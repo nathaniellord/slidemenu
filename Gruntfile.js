@@ -2,17 +2,32 @@ module.exports = function(grunt) {
 	// Do grunt-related things in here
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
-		'closure-compiler': {
-			frontend: {
-				js:'src/js/jquery.slidemenu.js',
-				jsOutputFile:'dist/js/jquery.slidemenu.min.js',
-				maxBuffer:500,
-				options: {
-					compilation_level:'SIMPLE_OPTIMIZATIONS',
-					language_in:'ECMASCRIPT5_STRICT'	
-				}
-			}
-		},
+        'jshint': {
+            'plugin':['src/js/jquery.slidemenu.js']
+        },
+        'jsbeautifier': {
+            files: ['src/**','examples/**'],
+            options: {
+                indentWithTabs: true,
+                css: {
+                    fileTypes: [".less"]
+                }
+            }
+        },
+        'uglify': {
+            base_plugin: {
+                options:{
+                    sourceMap:true,
+                    preserveComments:false,
+                    compress:{
+                        unsafe:true
+                    }
+                },
+                files: {
+                   'dist/js/jquery.slidemenu.min.js':['src/js/jquery.slidemenu.js']
+                }
+            }
+        },
 		'less' : {
 			development: {
 				options: {
@@ -58,7 +73,9 @@ module.exports = function(grunt) {
 	});
 	
 	grunt.loadNpmTasks('grunt-contrib-less');
-	grunt.loadNpmTasks('grunt-closure-compiler');
 	grunt.loadNpmTasks('grunt-contrib-copy');
-	grunt.registerTask('compile',['closure-compiler','less','copy']);
+    grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-jsbeautifier');
+	grunt.registerTask('default',['jshint','jsbeautifier','uglify','less','copy']);
 };

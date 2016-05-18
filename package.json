@@ -1,11 +1,13 @@
 {
   "name": "slidemenu",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "devDependencies": {
-    "grunt": "~0.4.5",
-    "grunt-closure-compiler": "*",
-    "grunt-contrib-copy": "^0.5.0",
-    "grunt-contrib-less": "*"
+    "grunt": "latest",
+    "grunt-contrib-copy": "latest",
+    "grunt-contrib-less": "latest",
+    "grunt-contrib-uglify": "latest",
+    "grunt-contrib-jshint": "latest",
+    "grunt-jsbeautifier": "latest"
   },
   "description": "A jQuery plugin for a slide menu with fun interactions",
   "main": "index.js",

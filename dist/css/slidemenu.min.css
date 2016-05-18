@@ -1,4 +1,3 @@
-/* CSS Document */
 /*
 Slide Menu
  CSS Structure as follows:
@@ -38,7 +37,7 @@ Slide Menu
 }
 .slide-menu.left-side .menu-panels {
   border-left: none;
-  border-right: 1px solid #cccccc;
+  border-right: 1px solid #CCCCCC;
   left: -100%;
 }
 .slide-menu.open .menu-items {
@@ -87,7 +86,7 @@ Slide Menu
   text-align: center;
 }
 .slide-menu .menu-items .menu-item.active {
-  color: #ffffff;
+  color: #FFFFFF;
   background-color: #5b97d8;
   top: 0px;
   position: absolute;
@@ -102,9 +101,9 @@ Slide Menu
   position: absolute;
   height: 100%;
   width: 250px;
-  background-color: #ffffff;
-  border-left: 1px solid #cccccc;
-  border-bottom: 1px solid #cccccc;
+  background-color: #FFFFFF;
+  border-left: 1px solid #CCCCCC;
+  border-bottom: 1px solid #CCCCCC;
 }
 .slide-menu .menu-panels .menu-panel {
   display: none;
