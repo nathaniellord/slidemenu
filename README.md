@@ -53,7 +53,7 @@ $(function() {
 All dist versions of the code are produced in the [grunt](gruntjs.com) task named 'compile'. Ensure all dependencies are installed using [npm](https://npmjs.org/). Once all dependencies have been installed populate the dist folder using the command "grunt compile" using the command line.
 
 
-The Javascript is minified using [Google's Closure Compiler](https://developers.google.com/closure/compiler/).
+The Javascript is minified using [UglifyJS2](https://github.com/gruntjs/grunt-contrib-uglify).
 
 
 The css is produced using the [Grunt less compiler](https://github.com/gruntjs/grunt-contrib-less).
