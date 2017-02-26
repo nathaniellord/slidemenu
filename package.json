@@ -19,7 +19,8 @@
     "example": "examples"
   },
   "scripts": {
-    "build": "gulp build"
+    "build": "gulp build",
+    "test": "gulp build"
   },
   "repository": {
     "type": "git",
